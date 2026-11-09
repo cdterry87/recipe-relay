@@ -1,0 +1,16 @@
+{
+    "name": "Recipe Relay",
+    "short_name": "Recipe Relay",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#fff8ee",
+    "theme_color": "#e8553d"
+}

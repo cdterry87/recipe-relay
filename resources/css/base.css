@@ -1,0 +1,75 @@
+html {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 100%;
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    /* Keeps focused and anchored elements clear of the sticky header. */
+    scroll-padding-block: var(--space-9) var(--space-4);
+}
+
+body {
+    min-height: 100dvh;
+    font-size: var(--text-md);
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--font-display);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+}
+
+h1 {
+    font-size: var(--text-2xl);
+}
+
+h2 {
+    font-size: var(--text-xl);
+}
+
+h3 {
+    font-size: var(--text-lg);
+}
+
+p {
+    text-wrap: pretty;
+}
+
+a {
+    color: var(--color-primary-text);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+
+    &:hover {
+        text-decoration-thickness: 2px;
+    }
+}
+
+:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
+}
+
+::selection {
+    background: var(--color-accent-subtle);
+}
+
+.skip-link {
+    position: fixed;
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-2);
+    z-index: 10;
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-200%);
+
+    &:focus-visible {
+        transform: none;
+    }
+}

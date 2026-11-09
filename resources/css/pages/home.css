@@ -1,0 +1,65 @@
+.hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-5);
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+
+    /* Soft blobs of brand colour behind the text. */
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        width: 28rem;
+        height: 28rem;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.55;
+    }
+
+    &::before {
+        inset-block-start: -12rem;
+        inset-inline-start: -8rem;
+        background: var(--color-primary-subtle);
+    }
+
+    &::after {
+        inset-block-end: -14rem;
+        inset-inline-end: -8rem;
+        background: var(--color-accent-subtle);
+    }
+}
+
+.hero__eyebrow {
+    font-family: var(--font-display);
+    font-weight: var(--weight-semibold);
+    color: var(--color-secondary);
+}
+
+.hero__title {
+    max-width: 16ch;
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+
+    & em {
+        font-style: normal;
+        color: var(--color-primary-text);
+    }
+}
+
+.hero__lede {
+    max-width: 38ch;
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+}
+
+.hero__chips {
+    justify-content: center;
+}
