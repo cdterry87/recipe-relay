@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'pages.home')->name('home');
@@ -26,6 +27,10 @@ Route::view('/creators', 'pages.coming-soon', [
     'message' => 'Meet the cooks behind the recipes and follow the ones you love. They are still prepping their kitchens.',
 ])->name('creators');
 
+// whereUuid keeps /recipes/new (an auth route below) from being read as a recipe.
+Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show')->whereUuid('recipe');
+Route::get('/r/{token}', [RecipeController::class, 'shared'])->name('recipes.shared')->where('token', '[A-Za-z0-9]{32}');
+
 Route::middleware('guest')->group(function () {
     Route::livewire('/login', 'pages::auth.login')->name('login');
     Route::livewire('/register', 'pages::auth.register')->middleware('registration.enabled')->name('register');
@@ -43,6 +48,10 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get('/verify-email/{user}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
+
+    Route::livewire('/recipes/new', 'pages::recipes.edit')->name('recipes.create');
+    Route::livewire('/recipes/{recipe}/edit', 'pages::recipes.edit')->name('recipes.edit');
+    Route::livewire('/my/recipes', 'pages::my.recipes')->name('my.recipes');
 
     Route::redirect('/settings', '/settings/profile');
     Route::livewire('/settings/profile', 'pages::settings.profile')->name('settings.profile');

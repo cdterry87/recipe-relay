@@ -5,6 +5,7 @@
             {{ $slot }}
             <x-ui.theme-toggle />
             @auth
+                <x-ui.button size="sm" icon="plus" class="site-header__new" :href="route('recipes.create')" wire:navigate>New recipe</x-ui.button>
                 <x-ui.user-menu />
             @else
                 @unless (request()->routeIs('login'))

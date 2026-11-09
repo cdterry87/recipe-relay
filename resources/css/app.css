@@ -30,9 +30,11 @@
 
 @import './pages/auth.css' layer(pages);
 @import './pages/coming-soon.css' layer(pages);
+@import './pages/editor.css' layer(pages);
 @import './pages/error.css' layer(pages);
 @import './pages/home.css' layer(pages);
 @import './pages/legal.css' layer(pages);
+@import './pages/recipe.css' layer(pages);
 @import './pages/settings.css' layer(pages);
 @import './pages/styleguide.css' layer(pages);
 

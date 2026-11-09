@@ -18,6 +18,7 @@
             <h2 class="site-footer__heading" id="footer-kitchen">Your kitchen</h2>
             <ul class="site-footer__links">
                 @auth
+                    <li><a href="{{ route('my.recipes') }}">My recipes</a></li>
                     <li><a href="{{ route('settings.profile') }}">Profile settings</a></li>
                     <li><a href="{{ route('settings.account') }}">Account settings</a></li>
                 @else
