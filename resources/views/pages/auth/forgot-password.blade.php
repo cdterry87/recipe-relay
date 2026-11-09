@@ -46,7 +46,7 @@ new #[Layout('layouts::app', ['width' => 'narrow']), Title('Forgot password')] c
 
 <x-ui.card class="auth">
     <header class="auth__header">
-        <h1>Forgot your password?</h1>
+        <h1>Forgot your <em>password?</em></h1>
         <p class="auth__lead">No problem. Enter your email and we'll send you a link to choose a new one.</p>
     </header>
 

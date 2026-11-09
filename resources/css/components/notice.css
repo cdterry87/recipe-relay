@@ -6,7 +6,8 @@
 }
 
 .notice--info {
-    background: var(--color-accent-subtle);
+    background: var(--color-band);
+    border: var(--border);
 }
 
 .notice--error {

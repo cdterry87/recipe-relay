@@ -80,7 +80,7 @@ new #[Layout('layouts::app', ['width' => 'narrow']), Title('Create an account')]
 
 <x-ui.card class="auth">
     <header class="auth__header">
-        <h1>Join {{ config('app.name') }}</h1>
+        <h1>Join the <em>relay</em></h1>
         <p class="auth__lead">Save your favorite recipes and pass the good ones along.</p>
     </header>
 

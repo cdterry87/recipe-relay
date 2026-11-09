@@ -3,8 +3,9 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: var(--space-1) var(--space-4);
-    padding: var(--space-5) var(--space-4);
+    gap: var(--space-1) var(--space-5);
+    padding: var(--space-6) var(--space-4);
+    background: var(--color-surface);
     border-block-start: var(--border);
     font-size: var(--text-sm);
     color: var(--color-text-muted);
@@ -13,6 +14,7 @@
         /* Padding lifts the small links to a 24px touch target. */
         display: inline-block;
         padding-block: var(--space-1);
-        color: inherit;
+        color: var(--color-text);
+        font-weight: var(--weight-semibold);
     }
 }

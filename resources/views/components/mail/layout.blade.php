@@ -9,24 +9,24 @@
     <meta name="color-scheme" content="light">
     <title>{{ $title }}</title>
 </head>
-<body style="margin:0; padding:0; background:#fff8ee; color:#2b2622; font-family:'Atkinson Hyperlegible Next', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff8ee;">
+<body style="margin:0; padding:0; background:#f8f3ee; color:#1a1a1a; font-family:'Open Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8f3ee;">
         <tr>
             <td align="center" style="padding:40px 16px;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
                     <tr>
-                        <td style="padding:0 0 24px; font-size:20px; font-weight:700; color:#2b2622;">
-                            <span style="display:inline-block; width:14px; height:14px; margin-right:6px; border-radius:50%; background:#e8553d;"></span>{{ config('app.name') }}
+                        <td style="padding:0 0 24px; font-size:20px; font-weight:800; text-transform:uppercase; color:#1a1a1a;">
+                            <span style="display:inline-block; width:14px; height:14px; margin-right:6px; border-radius:50%; background:#ff5d52;"></span>{{ config('app.name') }}
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding:32px; background:#ffffff; border:1px solid #f0e2d0; border-radius:20px;">
-                            <h1 style="margin:0 0 16px; font-size:24px; line-height:1.3; color:#2b2622;">{{ $title }}</h1>
+                        <td style="padding:32px; background:#ffffff; border:1px solid #e8e8e8; border-radius:16px;">
+                            <h1 style="margin:0 0 16px; font-size:24px; line-height:1.15; font-weight:800; text-transform:uppercase; color:#1a1a1a;">{{ $title }}</h1>
                             {{ $slot }}
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding:24px 0 0; font-size:13px; line-height:1.6; color:#6b5f55; text-align:center;">
+                        <td style="padding:24px 0 0; font-size:13px; line-height:1.6; color:#5c5c5c; text-align:center;">
                             {{ config('app.name') }} is a portfolio application that is not intended for public use.
                         </td>
                     </tr>

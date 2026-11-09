@@ -66,7 +66,7 @@ new #[Layout('layouts::app', ['width' => 'narrow']), Title('Log in')] class exte
 
 <x-ui.card class="auth">
     <header class="auth__header">
-        <h1>Welcome back!</h1>
+        <h1>Welcome <em>back</em></h1>
         <p class="auth__lead">Log in to get cooking.</p>
     </header>
 

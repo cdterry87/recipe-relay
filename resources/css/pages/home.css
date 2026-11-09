@@ -1,65 +1,274 @@
-.hero {
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    justify-items: center;
-    gap: var(--space-5);
-    padding: var(--space-8) var(--space-4);
+/* The cream tagline band under the header, full width. */
+.home-band {
+    margin-block: calc(-1 * var(--space-5)) var(--space-6);
+    margin-inline: calc(50% - 50vw);
+    padding: var(--space-5) var(--space-4);
+    background: var(--color-band);
+    border-block-end: var(--border);
     text-align: center;
-    overflow: hidden;
-    border-radius: var(--radius-xl);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-md);
-
-    /* Soft blobs of brand colour behind the text. */
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        z-index: -1;
-        width: 28rem;
-        height: 28rem;
-        border-radius: 50%;
-        filter: blur(60px);
-        opacity: 0.55;
-    }
-
-    &::before {
-        inset-block-start: -12rem;
-        inset-inline-start: -8rem;
-        background: var(--color-primary-subtle);
-    }
-
-    &::after {
-        inset-block-end: -14rem;
-        inset-inline-end: -8rem;
-        background: var(--color-accent-subtle);
-    }
 }
 
-.hero__eyebrow {
+.home-band__tagline {
     font-family: var(--font-display);
-    font-weight: var(--weight-semibold);
-    color: var(--color-secondary);
-}
-
-.hero__title {
-    max-width: 16ch;
-    font-size: var(--text-3xl);
-    font-weight: var(--weight-bold);
+    font-size: var(--text-md);
+    font-weight: var(--weight-heavy);
+    text-transform: uppercase;
 
     & em {
-        font-style: normal;
+        font-family: var(--font-accent);
+        font-weight: 400;
+        font-style: italic;
         color: var(--color-primary-text);
     }
 }
 
-.hero__lede {
-    max-width: 38ch;
-    font-size: var(--text-lg);
+.home-hero {
+    display: grid;
+    gap: var(--space-5);
+
+    @media (min-width: 60rem) {
+        grid-template-columns: 1.75fr 1fr;
+    }
+}
+
+/* Big dark feature panel with a warm glow. */
+.feature {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-4);
+    min-height: 22rem;
+    padding: var(--space-6);
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--color-dark), var(--color-dark-end));
+    color: var(--color-on-dark);
+
+    &::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        inset-block-start: -30%;
+        inset-inline-end: -15%;
+        width: 70%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgb(255 93 82 / 55%), transparent 65%);
+    }
+
+    & h1 {
+        max-width: 18ch;
+        font-size: var(--text-3xl);
+    }
+
+    & h1 em {
+        color: var(--color-brand);
+    }
+
+    & p {
+        max-width: 46ch;
+        color: rgb(255 255 255 / 85%);
+    }
+}
+
+.feature__emoji {
+    position: absolute;
+    z-index: -1;
+    inset-block-start: var(--space-5);
+    inset-inline-end: var(--space-6);
+    font-size: clamp(4rem, 3rem + 6vw, 8rem);
+    line-height: 1;
+    transform: rotate(12deg);
+}
+
+/* Coral call-to-action panel. */
+.promo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+
+    & .eyebrow {
+        color: inherit;
+        opacity: 0.85;
+    }
+
+    & h2 {
+        font-size: var(--text-2xl);
+    }
+
+    & h2 em {
+        color: inherit;
+    }
+}
+
+.promo__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block-start: auto;
+}
+
+.promo__note {
+    font-size: var(--text-xs);
+    text-align: center;
+    opacity: 0.9;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin-block-start: var(--space-8);
+}
+
+.section__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+/* Meal-type tiles. */
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+
+    @media (min-width: 40rem) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (min-width: 64rem) {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+
+.tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+}
+
+.tile__art {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-md);
+    background: var(--color-band);
+    font-size: 2.75rem;
+}
+
+.tile__name {
+    font-family: var(--font-display);
+    font-weight: var(--weight-heavy);
+    text-transform: uppercase;
+}
+
+.tile__note {
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
 }
 
-.hero__chips {
-    justify-content: center;
+/* Full-width coral band of short facts. */
+.facts {
+    display: grid;
+    gap: var(--space-5);
+    margin-block-start: var(--space-8);
+    margin-inline: calc(50% - 50vw);
+    padding: var(--space-7) var(--space-4);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+    text-align: center;
+
+    @media (min-width: 48rem) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.facts__value {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-heavy);
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.facts__label {
+    margin-block-start: var(--space-2);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+}
+
+/* Dark panel with the three steps. */
+.steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin-block-start: var(--space-8);
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(120deg, var(--color-dark), var(--color-dark-end));
+    color: var(--color-on-dark);
+
+    & .eyebrow {
+        color: rgb(255 255 255 / 80%);
+    }
+
+    & h2 em {
+        color: inherit;
+    }
+
+    @media (min-width: 48rem) {
+        padding: var(--space-7);
+    }
+}
+
+.steps__list {
+    display: grid;
+    gap: var(--space-4);
+    counter-reset: step;
+
+    @media (min-width: 48rem) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    counter-increment: step;
+
+    &::before {
+        content: counter(step);
+        display: grid;
+        place-items: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: var(--color-primary-subtle);
+        color: var(--color-primary-text);
+        font-family: var(--font-display);
+        font-weight: var(--weight-heavy);
+    }
+
+    & p {
+        color: var(--color-text-muted);
+        font-size: var(--text-sm);
+    }
 }

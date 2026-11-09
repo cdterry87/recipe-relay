@@ -43,7 +43,7 @@ new #[Layout('layouts::app', ['width' => 'narrow']), Title('Confirm your email')
 
 <x-ui.card class="auth">
     <header class="auth__header">
-        <h1>Check your inbox</h1>
+        <h1>Check your <em>inbox</em></h1>
         <p class="auth__lead">We sent a confirmation link to <strong>{{ auth()->user()->email }}</strong>. Click it to start sharing your recipes.</p>
     </header>
 

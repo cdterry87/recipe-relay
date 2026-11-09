@@ -95,7 +95,8 @@ new #[Layout('layouts::app', ['width' => 'reading']), Title('Profile settings')]
 
 <div class="settings">
     <header class="stack stack--sm">
-        <h1>Settings</h1>
+        <p class="eyebrow">Settings</p>
+        <h1>Your <em>profile</em></h1>
         <x-settings.nav />
     </header>
 

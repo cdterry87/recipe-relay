@@ -2,8 +2,9 @@
 @layer reset, tokens, base, layout, components, pages, utilities;
 
 /* Self-hosted variable fonts, bundled by Vite (no font CDN). */
-@import '@fontsource-variable/fredoka/index.css';
-@import '@fontsource-variable/atkinson-hyperlegible-next/index.css';
+@import '@fontsource-variable/league-spartan/index.css';
+@import '@fontsource-variable/open-sans/index.css';
+@import '@fontsource/dm-serif-display/400-italic.css';
 
 @import './reset.css' layer(reset);
 @import './tokens.css' layer(tokens);

@@ -156,7 +156,8 @@ new #[Layout('layouts::app', ['width' => 'reading']), Title('Account settings')]
     @php($user = auth()->user())
 
     <header class="stack stack--sm">
-        <h1>Settings</h1>
+        <p class="eyebrow">Settings</p>
+        <h1>Your <em>account</em></h1>
         <x-settings.nav />
     </header>
 

@@ -23,12 +23,13 @@
     padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
     background: var(--color-surface);
     border: var(--border);
-    border-inline-start: 6px solid var(--color-accent);
+    border-inline-start: 4px solid var(--color-brand);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
     font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
     pointer-events: auto;
-    animation: toast-in var(--motion-medium) var(--ease-spring);
+    animation: toast-in var(--motion-medium) var(--ease);
 }
 
 .toast--success {
@@ -48,6 +49,6 @@
 @keyframes toast-in {
     from {
         opacity: 0;
-        transform: translateY(0.75rem) scale(0.96);
+        transform: translateY(0.75rem);
     }
 }

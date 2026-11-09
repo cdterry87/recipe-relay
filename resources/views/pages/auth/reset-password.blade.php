@@ -78,7 +78,7 @@ new #[Layout('layouts::app', ['width' => 'narrow']), Title('Choose a new passwor
 
 <x-ui.card class="auth">
     <header class="auth__header">
-        <h1>Choose a new password</h1>
+        <h1>Choose a new <em>password</em></h1>
         <p class="auth__lead">Use at least 8 characters.</p>
     </header>
 

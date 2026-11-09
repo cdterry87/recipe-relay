@@ -1,28 +1,35 @@
+/* Small uppercase pill, for tags such as meal types and collections. */
 .chip {
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    min-height: 2rem;
+    min-height: 1.75rem;
     padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-full);
-    background: var(--color-surface-hover);
+    background: var(--color-surface);
+    border: var(--border);
     color: var(--color-text);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-medium);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     white-space: nowrap;
 }
 
 .chip--primary {
+    background: var(--color-primary);
+    border-color: transparent;
+    color: var(--color-on-primary);
+}
+
+.chip--subtle {
     background: var(--color-primary-subtle);
+    border-color: transparent;
     color: var(--color-primary-text);
 }
 
 .chip--secondary {
     background: var(--color-secondary-subtle);
+    border-color: transparent;
     color: var(--color-secondary);
-}
-
-.chip--accent {
-    background: var(--color-accent-subtle);
-    color: var(--color-text);
 }

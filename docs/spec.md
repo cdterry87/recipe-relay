@@ -422,21 +422,29 @@ GET  /unsubscribe/{user:uuid}       signed
 - Blade components (`<x-button>`, `<x-card>`, `<x-chip>`, `<x-star-rating>`, `<x-modal>`, `<x-toast>`, `<x-avatar>`, `<x-field>`) keep markup and styling consistent.
 - Icons: Blade SVG icon components drawn in one consistent rounded-stroke style.
 
-**Brand (no existing branding; this is the starting direction)**
-- **Name and mark:** "Recipe Relay". Logo idea: a wooden spoon passed like a relay baton, with a small motion swoosh, in a rounded badge. It must work in one color for the favicon.
-- **Personality:** warm, playful and tidy — "a bright kitchen on a Saturday morning".
-- **Palette (starting point; final values must pass AA contrast):**
-  - Primary — Tomato `#E8553D`
-  - Secondary — Basil `#3E8E5E`
-  - Accent — Butter `#F6C445`
-  - Surfaces — Cream `#FFF8EE` and white
-  - Text — Charcoal `#2B2622`
-  - Dark mode uses a warm charcoal surface (around `#1F1B18`), not pure black.
-- **Type:** a rounded, friendly display face for headings ("Fredoka" or "Nunito") and a highly legible sans for body text ("Atkinson Hyperlegible" or "Inter"). Fonts are self-hosted. Base size 18px.
-- **Shapes:** generous radius (16–24px cards, pill buttons and chips), soft layered shadows.
-- **Motion:** springy hover lifts on cards, a heart "pop" on save, a star sparkle on rating, and a small confetti burst on the first published recipe. All of it is disabled under `prefers-reduced-motion`.
-- **Illustration:** friendly food doodles for empty states and error pages, such as an empty pot for 404.
-- **Layout:** mobile-first; card grid with `repeat(auto-fill, minmax(16rem, 1fr))`; sticky top bar plus a bottom tab bar on mobile (Home, Discover, Add, Cookbook, Me). No page scrolls sideways at 320px wide.
+**Brand and look**
+
+The visual direction takes its cues from Pepper (peppertheapp.com): a clean, editorial food site. Recipe Relay uses the same kind of layout, type pairing and colour mood, but keeps its own name, logo, wording and images.
+
+- **Name and mark:** "Recipe Relay", set as an uppercase heavy wordmark. The mark is a white spoon passed like a relay baton, on a coral circle; it also works as the favicon. On the narrowest phones only the mark shows.
+- **Personality:** bright, confident and editorial, still friendly for all ages.
+- **Palette** (light / dark; every text pair meets AA):
+  - Page `#fcfcfc` / `#161413`; surfaces white / `#211e1c`; a warm cream band `#f8f3ee` / `#1d1a18`; thin borders `#e8e8e8` / `#34302d`
+  - Text `#1a1a1a` / `#f2f2f2`, muted `#5c5c5c` / `#a8a29e`
+  - **Coral** brand `#ff5d52` (dark mode `#ff7a70`) for large text, bands and decoration. White text on it only at large sizes.
+  - Buttons and links use a deeper coral `#d63c31` (white text 4.6:1); coral text `#c7352b`
+  - Deep warm feature panels: a gradient from `#2b2522` to `#5a4f4a`
+  - Basil green `#2f7a4e` only for success states
+- **Type** (self-hosted through npm, no font CDN):
+  - Headings: League Spartan, weight 800, uppercase, tight leading
+  - One accent word per heading in DM Serif Display italic, in coral: `<h1>Welcome <em>back</em></h1>`
+  - Body: Open Sans, 16px
+  - Eyebrow labels: small, bold, uppercase, widely letter-spaced, in coral
+- **Shapes:** 12px buttons and fields, 16px cards with a thin border and little or no shadow, pill-shaped search and tags. Tags on images are small uppercase pills (coral, or white).
+- **Page patterns:** a white sticky header; a cream tagline or search band under it; a large dark feature panel beside a coral call-to-action panel; full-width coral bands for short facts; dark panels holding white cards; recipe cards with the photo on top and a compact line of time, calories and saves.
+- **Motion:** quiet. Short colour and shadow transitions, a small logo tilt on hover, toasts that slide in. All of it is disabled under `prefers-reduced-motion`.
+- **Illustration:** emoji and simple flat doodles (such as the empty pot on error pages) until recipe photos exist.
+- **Layout:** mobile-first; card grids of 2, 3 or 6 columns; no page scrolls sideways at 320px wide.
 
 **Accessibility checklist**
 - Semantic landmarks, a skip link, and visible focus rings (`:focus-visible`).

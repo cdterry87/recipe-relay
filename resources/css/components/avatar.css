@@ -7,8 +7,8 @@
     border-radius: 50%;
     object-fit: cover;
     font-family: var(--font-display);
-    font-weight: var(--weight-semibold);
-    font-size: calc(var(--avatar-size) * 0.4);
+    font-weight: var(--weight-heavy);
+    font-size: calc(var(--avatar-size) * 0.38);
     line-height: 1;
 }
 
@@ -20,11 +20,15 @@
     --avatar-size: 3.5rem;
 }
 
+/* Large avatars get a coral ring. */
 .avatar--lg {
     --avatar-size: 7rem;
+
+    border: 3px solid var(--color-surface);
+    box-shadow: 0 0 0 3px var(--color-brand);
 }
 
-/* Initials sit on one of four brand tints, picked from the account's UUID. */
+/* Initials sit on one of four tints, picked from the account's UUID. */
 .avatar--tone-0 {
     background: var(--color-primary-subtle);
     color: var(--color-primary-text);
@@ -36,11 +40,11 @@
 }
 
 .avatar--tone-2 {
-    background: var(--color-accent-subtle);
+    background: var(--color-band);
     color: var(--color-text);
 }
 
 .avatar--tone-3 {
-    background: var(--color-surface-hover);
-    color: var(--color-text);
+    background: var(--color-dark);
+    color: var(--color-on-dark);
 }

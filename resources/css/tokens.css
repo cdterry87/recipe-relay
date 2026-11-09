@@ -3,52 +3,59 @@
 
     /*
      * Colour: components use these semantic names, never a raw value.
-     * Brand: Tomato (primary), Basil (secondary), Butter (accent), on Cream.
-     * Every text pair meets WCAG AA (4.5:1) in both themes.
+     * Brand: Coral on clean near-white, with warm cream bands and near-black text.
+     * Every text pair meets WCAG AA in both themes. Bright coral (--color-brand) is for
+     * decoration and large text only; buttons and links use the deeper --color-primary.
      */
-    --color-bg: light-dark(#fff8ee, #1f1b18);
-    --color-surface: light-dark(#ffffff, #2a2521);
-    --color-surface-hover: light-dark(#fcefe0, #342e29);
-    --color-border: light-dark(#f0e2d0, #3e3731);
-    --color-border-strong: light-dark(#8f7e6d, #8a7d71);
-    --color-text: light-dark(#2b2622, #f7efe6);
-    --color-text-muted: light-dark(#6b5f55, #bfb2a5);
-    --color-backdrop: light-dark(rgb(43 38 34 / 35%), rgb(10 8 7 / 65%));
+    --color-bg: light-dark(#fcfcfc, #161413);
+    --color-surface: light-dark(#ffffff, #211e1c);
+    --color-surface-hover: light-dark(#f5f3f1, #2a2523);
+    --color-band: light-dark(#f8f3ee, #1d1a18);
+    --color-border: light-dark(#e8e8e8, #34302d);
+    --color-border-strong: light-dark(#8c8c8c, #8a817b);
+    --color-text: light-dark(#1a1a1a, #f2f2f2);
+    --color-text-muted: light-dark(#5c5c5c, #a8a29e);
+    --color-backdrop: light-dark(rgb(26 26 26 / 35%), rgb(0 0 0 / 65%));
 
-    --color-brand: #e8553d; /* decorative only: logo, illustrations */
-    --color-primary: light-dark(#c4401f, #ff8a70);
-    --color-primary-hover: light-dark(#a93518, #ffa48f);
-    --color-on-primary: light-dark(#ffffff, #2b1410);
-    --color-primary-text: light-dark(#a93518, #ff8a70);
-    --color-primary-subtle: light-dark(#fde6df, #4a2a22);
+    --color-brand: light-dark(#ff5d52, #ff7a70);
+    --color-on-brand: light-dark(#ffffff, #1a0b09);
+    --color-primary: light-dark(#d63c31, #ff7a70);
+    --color-primary-hover: light-dark(#bd3329, #ff968e);
+    --color-on-primary: light-dark(#ffffff, #1a0b09);
+    --color-primary-text: light-dark(#c7352b, #ff7a70);
+    --color-primary-subtle: light-dark(#fff0ee, #3a211d);
 
     --color-secondary: light-dark(#2f7a4e, #7fcb9a);
-    --color-secondary-subtle: light-dark(#e3f2e8, #243a2c);
+    --color-secondary-subtle: light-dark(#e3f2e8, #1f3327);
 
-    --color-accent: #f6c445;
-    --color-on-accent: #2b2622;
-    --color-accent-subtle: light-dark(#fff4d1, #3d3320);
+    --color-dark: #2b2522; /* the deep feature panels, the same in both themes */
+    --color-dark-end: #5a4f4a;
+    --color-on-dark: #ffffff;
 
     --color-negative: light-dark(#b3261e, #ff8f87);
     --color-negative-subtle: light-dark(#fde7e5, #4a2422);
 
-    /* Type: rounded display face for headings, highly legible face for reading. */
-    --font-display: 'Fredoka Variable', 'Fredoka', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
-    --font-body: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui,
-        -apple-system, 'Segoe UI', sans-serif;
+    /* Type: heavy uppercase display headings, an italic serif for the accent word, and a friendly sans. */
+    --font-display: 'League Spartan Variable', 'League Spartan', ui-sans-serif, system-ui, sans-serif;
+    --font-accent: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+    --font-body: 'Open Sans Variable', 'Open Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --text-2xs: 0.75rem;
     --text-xs: 0.8125rem;
-    --text-sm: 0.9375rem;
-    --text-md: 1.125rem; /* 18px base */
-    --text-lg: 1.3125rem;
-    --text-xl: clamp(1.5rem, 1.3rem + 0.8vw, 1.875rem);
-    --text-2xl: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
-    --text-3xl: clamp(2.5rem, 1.8rem + 3vw, 4rem);
+    --text-sm: 0.875rem;
+    --text-md: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+    --text-2xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.375rem);
+    --text-3xl: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
     --weight-regular: 400;
     --weight-medium: 500;
     --weight-semibold: 600;
     --weight-bold: 700;
-    --leading-tight: 1.15;
+    --weight-heavy: 800;
+    --leading-tight: 1.05;
+    --leading-snug: 1.3;
     --leading-normal: 1.6;
+    --tracking-eyebrow: 0.15em;
 
     /* Space */
     --space-1: 0.25rem;
@@ -63,14 +70,14 @@
 
     /* Shape */
     --radius-sm: 0.5rem;
-    --radius-md: 0.875rem;
-    --radius-lg: 1.25rem;
-    --radius-xl: 1.75rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
     --radius-full: 999px;
     --border: 1px solid var(--color-border);
-    --shadow-sm: 0 1px 2px rgb(43 38 34 / 6%), 0 2px 6px rgb(43 38 34 / 6%);
-    --shadow-md: 0 2px 4px rgb(43 38 34 / 6%), 0 8px 24px rgb(43 38 34 / 10%);
-    --shadow-lg: 0 4px 8px rgb(43 38 34 / 8%), 0 20px 48px rgb(43 38 34 / 14%);
+    --shadow-sm: 0 1px 2px rgb(26 26 26 / 4%), 0 2px 8px rgb(26 26 26 / 4%);
+    --shadow-md: 0 2px 6px rgb(26 26 26 / 5%), 0 10px 30px rgb(26 26 26 / 8%);
+    --shadow-lg: 0 4px 10px rgb(26 26 26 / 8%), 0 20px 48px rgb(26 26 26 / 14%);
     --focus-ring: 3px solid var(--color-primary);
 
     /* Size */
@@ -78,15 +85,14 @@
     --control-height-sm: 2.25rem;
     --icon-size: 1.25rem;
     --page-width: 76rem;
-    --reading-width: 44rem;
+    --reading-width: 46rem;
     --narrow-width: 30rem;
     --turnstile-height: 65px; /* Cloudflare widget height */
 
     /* Motion */
     --motion-fast: 140ms;
-    --motion-medium: 280ms;
+    --motion-medium: 240ms;
     --ease: cubic-bezier(0.2, 0, 0, 1);
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 [data-theme='light'] {

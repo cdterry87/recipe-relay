@@ -13,9 +13,9 @@
 }
 
 .error-page__code {
-    font-family: var(--font-display);
+    font-family: var(--font-accent);
     font-size: var(--text-3xl);
-    font-weight: var(--weight-bold);
+    font-style: italic;
     color: var(--color-primary-text);
     font-variant-numeric: tabular-nums;
     line-height: 1;
