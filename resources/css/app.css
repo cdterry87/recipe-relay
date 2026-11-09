@@ -1,0 +1,28 @@
+/* Hand-written CSS only: no Tailwind or UI kits. See section B8 of docs/spec.md. */
+@layer reset, tokens, base, layout, components, pages, utilities;
+
+/* Self-hosted variable fonts, bundled by Vite (no font CDN). */
+@import '@fontsource-variable/fredoka/index.css';
+@import '@fontsource-variable/atkinson-hyperlegible-next/index.css';
+
+@import './reset.css' layer(reset);
+@import './tokens.css' layer(tokens);
+@import './base.css' layer(base);
+@import './layout.css' layer(layout);
+
+@import './components/button.css' layer(components);
+@import './components/card.css' layer(components);
+@import './components/chip.css' layer(components);
+@import './components/footer.css' layer(components);
+@import './components/header.css' layer(components);
+@import './components/icon.css' layer(components);
+@import './components/logo.css' layer(components);
+@import './components/notice.css' layer(components);
+@import './components/theme-toggle.css' layer(components);
+
+@import './pages/error.css' layer(pages);
+@import './pages/home.css' layer(pages);
+@import './pages/legal.css' layer(pages);
+@import './pages/styleguide.css' layer(pages);
+
+@import './utilities.css' layer(utilities);

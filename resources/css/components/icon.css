@@ -1,0 +1,10 @@
+.icon {
+    flex-shrink: 0;
+    width: var(--icon-size);
+    height: var(--icon-size);
+}
+
+.icon--sm {
+    width: 1rem;
+    height: 1rem;
+}
