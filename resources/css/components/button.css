@@ -91,3 +91,12 @@
 .btn--block {
     width: 100%;
 }
+
+.btn--danger {
+    background: var(--color-negative);
+    color: light-dark(#ffffff, #2b1410);
+
+    &:hover {
+        background: color-mix(in srgb, var(--color-negative) 85%, black);
+    }
+}

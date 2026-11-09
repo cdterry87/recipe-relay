@@ -1,4 +1,4 @@
-<x-layouts::app title="Privacy Policy" reading>
+<x-layouts::app title="Privacy Policy" width="reading">
     <x-ui.card class="legal">
         <header class="legal__header">
             <h1>Privacy Policy</h1>

@@ -1,0 +1,46 @@
+.avatar {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+    border-radius: 50%;
+    object-fit: cover;
+    font-family: var(--font-display);
+    font-weight: var(--weight-semibold);
+    font-size: calc(var(--avatar-size) * 0.4);
+    line-height: 1;
+}
+
+.avatar--sm {
+    --avatar-size: 2.25rem;
+}
+
+.avatar--md {
+    --avatar-size: 3.5rem;
+}
+
+.avatar--lg {
+    --avatar-size: 7rem;
+}
+
+/* Initials sit on one of four brand tints, picked from the account's UUID. */
+.avatar--tone-0 {
+    background: var(--color-primary-subtle);
+    color: var(--color-primary-text);
+}
+
+.avatar--tone-1 {
+    background: var(--color-secondary-subtle);
+    color: var(--color-secondary);
+}
+
+.avatar--tone-2 {
+    background: var(--color-accent-subtle);
+    color: var(--color-text);
+}
+
+.avatar--tone-3 {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+}

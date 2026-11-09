@@ -79,6 +79,8 @@
     --icon-size: 1.25rem;
     --page-width: 76rem;
     --reading-width: 44rem;
+    --narrow-width: 30rem;
+    --turnstile-height: 65px; /* Cloudflare widget height */
 
     /* Motion */
     --motion-fast: 140ms;

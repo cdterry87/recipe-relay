@@ -180,7 +180,7 @@ There is no admin role or admin area in v1.
 ### B3.1 Accounts
 - **Registration** (only when demo mode is off): name, email, password. Protected by Cloudflare Turnstile (§B13) and rate limiting. Logs the user in on success.
 - **Google sign-in** (Socialite), the only social login. When registration is open it can create an account. When registration is closed it signs in existing accounts only (matched on a verified Google email), and otherwise shows "Registration is closed".
-- **Email verification** is required before a member can publish a recipe as public or unlisted. Accounts made with `user:create` or Google are verified already.
+- **Email verification** is required before a member can publish a recipe as public or unlisted. Accounts made with `user:create` or Google are verified already. Verification links name the account by UUID (`/verify-email/{uuid}/{hash}`), are signed and expire after 60 minutes. Changing the email clears verification and sends a new link.
 - **Login** with "remember me", logout, and forgot/reset password through Laravel's `Password` broker. Real emails are sent. Forgot-password always shows the same neutral message.
 - **Profile:** display name, avatar upload (cropped to a square), short bio (≤ 280 characters), timezone.
 - **Account settings:** change email (re-verify), change password, email preferences (§B3.7), delete account (current password required; deletes their recipes, saves, ratings and follows).
@@ -400,7 +400,7 @@ GET  /unsubscribe/{user:uuid}       signed
 - **Alpine usage:** purely client-side behavior — servings scaler, check-offs, cook mode, share sheet, theme toggle, Turnstile widget, dropdowns, modals, toasts, drag-to-reorder.
 - **Domain layer:** `app/Actions/*` for writes (`SaveRecipe`, `UnsaveRecipe` — which also removes the rating, `RateRecipe`, `ToggleFollow`, `SendWeeklyDigest`). A single `RecipeFilters` class owns all filtering and sorting. Policies handle authorization.
 - **Security:** policies everywhere, allow-listed sorts, escaped text (no raw HTML anywhere), no raw video HTML, unguessable unlisted links, signed unsubscribe URLs, rate limiting, image validation and re-encoding (strips EXIF), and security headers (CSP, `X-Content-Type-Options`, `Referrer-Policy`). `TRUSTED_PROXIES` setting for running behind Cloudflare.
-- **Media:** images on the `public` disk. Resized into a few widths (WebP) by a queued job using Intervention Image; served with `srcset` and `loading="lazy"`.
+- **Media:** images on the `public` disk, always re-encoded with Intervention Image (which strips EXIF data). Recipe photos are resized into a few widths (WebP) by a queued job and served with `srcset` and `loading="lazy"`. Avatars are a single 400×400 WebP, cropped from the centre while the upload is handled. Google profile pictures are not imported.
 - **Mail and queues:** `database` queue. Mailpit locally; a transactional provider (Resend, as in ct-billify) in production. Markdown mail templates styled to the brand.
 - **Scheduling** (`routes/console.php`):
   - `digest:send` hourly

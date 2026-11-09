@@ -17,7 +17,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            // Null for accounts that only sign in with Google, and for sample creators.
+            $table->string('password')->nullable();
+            $table->string('google_id')->nullable()->unique();
+            $table->string('avatar_path')->nullable();
+            $table->string('bio', 280)->nullable();
+            $table->string('timezone')->default('UTC');
+            $table->boolean('is_demo')->default(false);
+            $table->boolean('is_sample')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
