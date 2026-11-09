@@ -14,7 +14,9 @@ use App\Models\Recipe;
 use App\Support\RecipeImages;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -25,7 +27,12 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
 {
     use WithFileUploads;
 
-    public ?Recipe $recipe = null;
+    /**
+     * The recipe being edited, by UUID. The component never holds the model itself, so its
+     * database id stays off the page.
+     */
+    #[Locked]
+    public ?string $recipeUuid = null;
 
     public RecipeForm $form;
 
@@ -38,17 +45,25 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
     {
         if ($recipe?->exists) {
             Gate::authorize('update', $recipe);
-            $this->recipe = $recipe->load('ingredients', 'steps');
+            $this->recipeUuid = $recipe->uuid;
         } else {
-            $this->recipe = null;
             Gate::authorize('create', Recipe::class);
         }
 
         $this->form->fillFrom($this->recipe);
     }
 
+    #[Computed]
+    public function recipe(): ?Recipe
+    {
+        return $this->recipeUuid === null
+            ? null
+            : Recipe::query()->with('ingredients', 'steps')->where('uuid', $this->recipeUuid)->firstOrFail();
+    }
+
     public function rendering($view): void
     {
+        $view->with('recipe', $this->recipe);
         $view->title($this->recipe ? 'Edit '.$this->recipe->title : 'New recipe');
     }
 
@@ -135,7 +150,7 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
 
         $isNew = $this->recipe === null;
 
-        $this->recipe = $saveRecipe->handle(
+        $saved = $saveRecipe->handle(
             auth()->user(),
             $this->recipe,
             $this->form->details(),
@@ -146,18 +161,21 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
             $this->removePhoto,
         );
 
+        $this->recipeUuid = $saved->uuid;
+        unset($this->recipe);
+
         $this->photo?->delete();
         $this->reset('photo', 'removePhoto');
 
         if ($isNew) {
             session()->flash('toast', ['type' => 'success', 'message' => 'Your recipe is saved. Keep going, or view it any time.']);
-            $this->redirectRoute('recipes.edit', $this->recipe, navigate: true);
+            $this->redirectRoute('recipes.edit', $saved, navigate: true);
 
             return;
         }
 
-        $this->form->fillFrom($this->recipe->load('ingredients', 'steps'));
-        $this->dispatch('toast', type: 'success', message: $this->recipe->isComplete() ? 'Recipe saved.' : 'Draft saved. Add an ingredient and a step to finish it.');
+        $this->form->fillFrom($this->recipe);
+        $this->dispatch('toast', type: 'success', message: $saved->isComplete() ? 'Recipe saved.' : 'Draft saved. Add an ingredient and a step to finish it.');
     }
 
     public function resetShareLink(): void
@@ -165,6 +183,7 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
         Gate::authorize('update', $this->recipe);
 
         $this->recipe->forceFill(['share_token' => Recipe::newShareToken()])->save();
+        unset($this->recipe);
 
         $this->dispatch('toast', type: 'success', message: 'New link made. The old one no longer works.');
     }

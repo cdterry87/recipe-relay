@@ -17,6 +17,8 @@ enum RecipeSort: string
     case MostSaved = 'most-saved';
     case Quickest = 'quickest';
     case Title = 'a-z';
+    // Only on the Cookbook, whose query selects a saved_at column.
+    case Saved = 'recently-saved';
 
     public function label(): string
     {
@@ -27,6 +29,7 @@ enum RecipeSort: string
             self::MostSaved => 'Most saved',
             self::Quickest => 'Quickest',
             self::Title => 'A to Z',
+            self::Saved => 'Recently saved',
         };
     }
 

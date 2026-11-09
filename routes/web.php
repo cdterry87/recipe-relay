@@ -14,14 +14,8 @@ Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
 Route::livewire('/discover', 'pages::discover')->name('discover');
 Route::livewire('/collections/{collection}', 'pages::collections.show')->name('collections.show')->where('collection', '[a-z-]+');
 
-// Placeholder until creator pages arrive in M4.
-Route::view('/creators', 'pages.coming-soon', [
-    'title' => 'Trending creators',
-    'eyebrow' => 'Coming soon',
-    'heading' => 'Trending <em>creators</em>',
-    'emoji' => '👩‍🍳',
-    'message' => 'Meet the cooks behind the recipes and follow the ones you love. They are still prepping their kitchens.',
-])->name('creators');
+Route::livewire('/creators', 'pages::creators.index')->name('creators');
+Route::livewire('/creators/{creator}', 'pages::creators.show')->name('creators.show')->whereUuid('creator');
 
 // whereUuid keeps /recipes/new (an auth route below) from being read as a recipe.
 Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show')->whereUuid('recipe');
@@ -48,6 +42,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::livewire('/recipes/new', 'pages::recipes.edit')->name('recipes.create');
     Route::livewire('/recipes/{recipe}/edit', 'pages::recipes.edit')->name('recipes.edit');
     Route::livewire('/my/recipes', 'pages::my.recipes')->name('my.recipes');
+    Route::livewire('/my/cookbook', 'pages::my.cookbook')->name('my.cookbook');
+    Route::livewire('/my/following', 'pages::my.following')->name('my.following');
+    Route::livewire('/my/notifications', 'pages::my.notifications')->name('my.notifications');
 
     Route::redirect('/settings', '/settings/profile');
     Route::livewire('/settings/profile', 'pages::settings.profile')->name('settings.profile');

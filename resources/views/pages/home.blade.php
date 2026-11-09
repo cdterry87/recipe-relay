@@ -52,6 +52,38 @@
         </aside>
     </div>
 
+    @auth
+        @if ($followed->isNotEmpty())
+            <section class="section" aria-labelledby="followed-title">
+                <div class="section__top">
+                    <header class="section__header">
+                        <p class="eyebrow">Your feed</p>
+                        <h2 id="followed-title">From people you <em>follow</em></h2>
+                    </header>
+                    <a class="more-link" href="{{ route('my.following') }}" wire:navigate>View more <span aria-hidden="true">→</span><span class="visually-hidden"> from people you follow</span></a>
+                </div>
+                <div class="card-grid">
+                    @foreach ($followed as $recipe)<x-recipe.tile :recipe="$recipe" />@endforeach
+                </div>
+            </section>
+        @endif
+
+        @if ($saved->isNotEmpty())
+            <section class="section" aria-labelledby="saved-title">
+                <div class="section__top">
+                    <header class="section__header">
+                        <p class="eyebrow">Your cookbook</p>
+                        <h2 id="saved-title">Recently <em>saved</em></h2>
+                    </header>
+                    <a class="more-link" href="{{ route('my.cookbook') }}" wire:navigate>View more <span aria-hidden="true">→</span><span class="visually-hidden"> saved recipes</span></a>
+                </div>
+                <div class="card-grid">
+                    @foreach ($saved as $recipe)<x-recipe.tile :recipe="$recipe" />@endforeach
+                </div>
+            </section>
+        @endif
+    @endauth
+
     <section class="section" aria-labelledby="recipes-title">
         <div class="section__top">
             <header class="section__header">
@@ -131,6 +163,26 @@
         </div>
     </section>
 
+    @if ($featured)
+        <section class="featured-creator" aria-labelledby="featured-title">
+            <div class="featured-creator__intro">
+                <p class="eyebrow">Featured creator</p>
+                <div class="featured-creator__who">
+                    <x-ui.avatar :user="$featured" size="lg" />
+                    <div>
+                        <h2 id="featured-title"><a href="{{ route('creators.show', $featured) }}" wire:navigate>{{ $featured->name }}</a></h2>
+                        <p class="muted">{{ number_format($featured->followers_count) }} {{ str('follower')->plural($featured->followers_count) }} · {{ number_format($featured->public_recipes_count) }} {{ str('recipe')->plural($featured->public_recipes_count) }}</p>
+                    </div>
+                </div>
+                @if ($featured->bio)<p>{{ $featured->bio }}</p>@endif
+                <livewire:follow-button :creator="$featured" size="md" />
+            </div>
+            <div class="featured-creator__recipes">
+                @foreach ($featured->latestRecipes as $recipe)<x-recipe.tile :recipe="$recipe" />@endforeach
+            </div>
+        </section>
+    @endif
+
     <section class="creators-panel" aria-labelledby="creators-title">
         <div class="section__top">
             <header class="section__header">
@@ -140,9 +192,15 @@
             <a class="more-link" href="{{ route('creators') }}">View more <span aria-hidden="true">→</span><span class="visually-hidden"> trending creators</span></a>
         </div>
         <div class="creators-panel__list">
-            @foreach (App\Support\Showcase::creators() as $creator)
-                <x-creator.card :name="$creator['name']" :specialty="$creator['specialty']" :saves="$creator['saves']" :recipes="$creator['recipes']" />
-            @endforeach
+            @if ($creators)
+                @foreach ($creators as $creator)
+                    <x-creator.tile :creator="$creator" />
+                @endforeach
+            @else
+                @foreach (App\Support\Showcase::creators() as $creator)
+                    <x-creator.card :name="$creator['name']" :specialty="$creator['specialty']" :saves="$creator['saves']" :recipes="$creator['recipes']" />
+                @endforeach
+            @endif
         </div>
     </section>
 

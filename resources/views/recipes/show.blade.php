@@ -49,10 +49,16 @@
                 @if ($recipe->meal_type)<p class="eyebrow">{{ $recipe->meal_type->label() }}@if ($recipe->cuisine) · {{ $recipe->cuisine->label() }}@endif</p>@endif
                 <h1 class="recipe__title">{{ $recipe->title }}</h1>
                 @if ($recipe->summary)<p class="recipe__summary">{{ $recipe->summary }}</p>@endif
-                <p class="recipe__by">
-                    <x-ui.avatar :user="$recipe->user" size="sm" />
-                    <span>by <strong>{{ $recipe->user->name }}</strong></span>
-                </p>
+                <div class="recipe__by">
+                    <a class="recipe__creator" href="{{ route('creators.show', $recipe->user) }}" wire:navigate>
+                        <x-ui.avatar :user="$recipe->user" size="sm" />
+                        <span>by <strong>{{ $recipe->user->name }}</strong></span>
+                    </a>
+                    @if ($isPublic)
+                        <livewire:follow-button :creator="$recipe->user" />
+                    @endif
+                </div>
+                <livewire:recipe-actions :recipe="$recipe" />
                 @if ($recipe->collections?->isNotEmpty() || $recipe->dietary_tags?->isNotEmpty())
                     <ul class="cluster recipe__tags" aria-label="Collections and dietary tags">
                         @foreach ($recipe->collections ?? [] as $collection)

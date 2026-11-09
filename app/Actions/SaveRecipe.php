@@ -78,6 +78,8 @@ final class SaveRecipe
             RecipeImages::delete($oldImage);
         }
 
+        (new AnnounceRecipe)->handle($recipe);
+
         return $recipe->refresh();
     }
 

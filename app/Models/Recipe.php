@@ -52,6 +52,7 @@ use Illuminate\Support\Str;
  * @property int $rating_count
  * @property int $saves_count
  * @property Carbon|null $published_at
+ * @property Carbon|null $announced_at
  * @property string|null $seed_key
  *
  * A recipe. Ownership, visibility, status, the image, counters and the share token are never
@@ -105,6 +106,7 @@ class Recipe extends Model
             'rating_count' => 'integer',
             'saves_count' => 'integer',
             'published_at' => 'datetime',
+            'announced_at' => 'datetime',
         ];
     }
 
@@ -135,6 +137,58 @@ class Recipe extends Model
     public function steps(): HasMany
     {
         return $this->hasMany(Step::class)->orderBy('position');
+    }
+
+    /**
+     * @return HasMany<Save, $this>
+     */
+    public function saves(): HasMany
+    {
+        return $this->hasMany(Save::class);
+    }
+
+    /**
+     * @return HasMany<Rating, $this>
+     */
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    /**
+     * Recounts the cached save and rating figures from their tables. Written without touching
+     * updated_at, so being saved or rated never counts as an edit.
+     */
+    public function refreshCounters(): void
+    {
+        $ratings = $this->ratings()->toBase()->selectRaw('count(*) as total, avg(stars) as average')->first();
+
+        $counters = [
+            'saves_count' => $this->saves()->count(),
+            'rating_count' => (int) ($ratings->total ?? 0),
+            'rating_avg' => round((float) ($ratings->average ?? 0), 2),
+        ];
+
+        static::query()->whereKey($this->getKey())->toBase()->update($counters);
+        $this->forceFill($counters)->syncOriginalAttributes(array_keys($counters));
+    }
+
+    /**
+     * Fewer ratings than this show as "New" rather than an average.
+     */
+    public const MIN_RATINGS_SHOWN = 3;
+
+    public function hasEnoughRatings(): bool
+    {
+        return $this->rating_count >= self::MIN_RATINGS_SHOWN;
+    }
+
+    /**
+     * Whether members can save (and so rate) this recipe: anything that can be shared.
+     */
+    public function isSaveable(): bool
+    {
+        return $this->visibility->isShared() && $this->isComplete();
     }
 
     /**

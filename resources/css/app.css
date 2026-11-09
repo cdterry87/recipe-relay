@@ -13,10 +13,12 @@
 
 @import './components/avatar.css' layer(components);
 @import './components/banner.css' layer(components);
+@import './components/bell.css' layer(components);
 @import './components/button.css' layer(components);
 @import './components/card.css' layer(components);
 @import './components/chip.css' layer(components);
 @import './components/creator-card.css' layer(components);
+@import './components/engage.css' layer(components);
 @import './components/field.css' layer(components);
 @import './components/filter-bar.css' layer(components);
 @import './components/footer.css' layer(components);
@@ -30,13 +32,13 @@
 @import './components/user-menu.css' layer(components);
 
 @import './pages/auth.css' layer(pages);
-@import './pages/coming-soon.css' layer(pages);
 @import './pages/editor.css' layer(pages);
 @import './pages/error.css' layer(pages);
 @import './pages/home.css' layer(pages);
 @import './pages/legal.css' layer(pages);
 @import './pages/recipe.css' layer(pages);
 @import './pages/settings.css' layer(pages);
+@import './pages/social.css' layer(pages);
 @import './pages/styleguide.css' layer(pages);
 
 @import './utilities.css' layer(utilities);
