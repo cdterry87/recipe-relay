@@ -1,4 +1,4 @@
-@props(['title', 'image' => null, 'tag' => null, 'minutes' => null, 'calories' => null, 'saves' => null, 'by' => null, 'href' => null])
+@props(['title', 'image' => null, 'tag' => null, 'minutes' => null, 'calories' => null, 'saves' => null, 'rating' => null, 'by' => null, 'href' => null])
 
 {{-- A recipe card: photo with a tag, title, a compact facts line, and the cook. --}}
 <article {{ $attributes->class('recipe-card') }}>
@@ -17,6 +17,7 @@
         <p class="recipe-card__meta">
             @if ($minutes)<span>{{ App\Models\Recipe::formatMinutes($minutes) }}</span>@endif
             @if ($calories)<span>{{ $calories }} cal</span>@endif
+            @if ($rating)<span class="recipe-card__rating"><x-ui.icon name="star" size="sm" /> {{ $rating }}<span class="visually-hidden"> out of 5</span></span>@endif
             @if ($saves)<span class="recipe-card__saves">{{ $saves }} saves</span>@endif
         </p>
         @if ($slot->isNotEmpty())<div class="recipe-card__badges">{{ $slot }}</div>@endif

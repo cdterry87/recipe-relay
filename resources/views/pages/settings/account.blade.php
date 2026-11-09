@@ -1,6 +1,6 @@
 <?php
 
-use App\Support\Avatars;
+use App\Actions\DeleteAccount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -115,8 +115,7 @@ new #[Layout('layouts::app', ['width' => 'reading']), Title('Account settings')]
         }
 
         Auth::logout();
-        Avatars::delete($user->avatar_path);
-        $user->delete();
+        (new DeleteAccount)->handle($user);
 
         session()->invalidate();
         session()->regenerateToken();

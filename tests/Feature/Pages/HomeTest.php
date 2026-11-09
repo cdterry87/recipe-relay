@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\Cookbook;
+use App\Actions\Follows;
 use App\Models\Recipe;
 use App\Models\User;
 use App\Support\Showcase;
@@ -66,11 +68,10 @@ it('formats durations the way cards show them', function (int $minutes, string $
     [75, '1h 15m'],
 ]);
 
-it('shows a placeholder page for creators', function () {
+it('shows the creators page', function () {
     $this->get(route('creators'))
         ->assertOk()
-        ->assertSee('Trending <em>creators</em>', false)
-        ->assertSee('Coming soon');
+        ->assertSee('Meet the <em>creators</em>', false);
 });
 
 it('shows account links in the footer for guests and members', function () {
@@ -82,4 +83,40 @@ it('shows account links in the footer for guests and members', function () {
         ->get(route('home'))
         ->assertSee('href="'.route('settings.profile').'">Profile settings</a>', false)
         ->assertDontSee('>Log in</a>', false);
+});
+
+it('shows members recipes from people they follow and their recent saves', function () {
+    $member = User::factory()->create();
+    $creator = Recipe::factory()->public()->create(['title' => 'Followed Fritters'])->user;
+    app(Follows::class)->follow($member, $creator);
+    app(Cookbook::class)->save($member, Recipe::factory()->unlisted()->create(['title' => 'Saved Soup']));
+
+    $this->actingAs($member)->get(route('home'))
+        ->assertSee('From people you <em>follow</em>', false)
+        ->assertSee('Followed Fritters')
+        ->assertSee('Recently <em>saved</em>', false)
+        ->assertSee('Saved Soup');
+
+    $this->post(route('logout'));
+    $this->get(route('home'))->assertDontSee('Recently <em>saved</em>', false);
+});
+
+it('switches trending creators to real ones once there are four', function () {
+    $creators = Recipe::factory()->public()->count(4)->create()->pluck('user');
+
+    $this->get(route('home'))
+        ->assertSee('href="'.route('creators.show', $creators->first()).'"', false)
+        ->assertDontSee('Weeknight dinners');
+});
+
+it('features the most followed creator who posted this month', function () {
+    $star = Recipe::factory()->public()->create()->user;
+    $star->forceFill(['bio' => 'Bakes every Sunday.'])->save();
+    $old = Recipe::factory()->public()->create(['published_at' => now()->subMonths(2)])->user;
+    User::factory()->count(2)->create()->each(fn (User $fan) => app(Follows::class)->follow($fan, $old));
+    app(Follows::class)->follow(User::factory()->create(), $star);
+
+    $this->get(route('home'))
+        ->assertSee('Featured creator')
+        ->assertSee('Bakes every Sunday.');
 });

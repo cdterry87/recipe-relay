@@ -155,7 +155,7 @@ abstract class RecipeListing extends Component
             return;
         }
 
-        $this->redirectRoute('recipes.show', $recipe, navigate: true);
+        $this->redirect($recipe->shareUrl(), navigate: true);
     }
 
     /**

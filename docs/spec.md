@@ -261,6 +261,14 @@ Fields:
   - **Digest preview:** `/my/digest` shows the next digest in the browser. This lets portfolio visitors see the feature without receiving email.
 - **In-app notifications** (database channel, under a bell icon): "X started following you", "Y rated your recipe", "Z posted a new recipe".
 - **Email preferences:** weekly digest (on), new follower (off), new rating (off).
+- **How it's built (M4):**
+  - Actions own every change: `Cookbook` (save, remove, rate), `Follows`, `AnnounceRecipe`, `DeleteAccount`. Each Cookbook change locks the recipe row and recounts `saves_count`, `rating_count` and `rating_avg` without touching `updated_at`.
+  - "Z posted a new recipe" goes out once per recipe: `recipes.announced_at` is claimed atomically the first time a recipe is public. Unlisted recipes are never announced.
+  - Following, unfollowing and following again leaves one "new follower" notification.
+  - Notification data holds UUIDs and names only. Notifications are queued (`afterCommit`).
+  - A guest who clicks Save or Follow is sent to log in. The intent is kept in the session by a Livewire action, never a link, and is finished when they land back on the page.
+  - Livewire components hold `#[Locked]` UUIDs, never models, because a model property puts its database id in the page snapshot. The recipe editor was changed to match.
+  - The Cookbook sorts by "Recently saved" by default. A recipe whose owner makes it private disappears from cookbooks until it is shared again.
 - No email is ever sent to the demo user or sample creators.
 
 ### B3.8 Sharing
@@ -274,6 +282,7 @@ Fields:
 - Social preview images use the hero image.
 
 ### B3.9 Creator profiles
+- `/creators` lists every member with a public recipe, most followed first, with a name search.
 - `/creators/{uuid}` shows the avatar, bio, follower and public-recipe counts, a follow button, and the creator's public recipes (filterable).
 - A profile with no public recipes shows a friendly empty state. There are no private profiles.
 
@@ -371,7 +380,8 @@ GET  /discover                      discover (query-string filters)
 GET  /collections/{collection}      collection.show
 GET  /recipes/{recipe:uuid}         recipe.show      (public; owner sees any)
 GET  /r/{token}                     recipe.shared    (unlisted share link)
-GET  /creators/{user:uuid}          creator.show
+GET  /creators                      creators        (most-followed creators, searchable)
+GET  /creators/{user:uuid}          creators.show
 GET  /privacy-policy                privacy-policy
 --- auth ---
 GET  /recipes/new                   recipe.create
@@ -442,7 +452,7 @@ The page structure and type pairing take cues from Pepper (peppertheapp.com), a 
   - Eyebrow labels: small, bold, uppercase, widely letter-spaced
 - **Shapes:** 12px buttons and fields, 16px cards with a thin border and little or no shadow, pill-shaped tags. Tags on photos are small white uppercase pills.
 - **Home page** (top to bottom): a kraft tagline band; a deep green feature panel beside a kraft-paper call-to-action panel; **Trending recipes** (4-column recipe cards: photo with tag, title, a one-line "time · calories · saves", and the cook) with a "View more →" link; meal-type tiles; a kraft-brown facts band; **Trending creators** (creator cards with ringed avatars, specialty and saves on a deep green panel) with a "View more →" link; and a kraft-paper panel describing the core features beside a tilted sample recipe card.
-  - Until real recipes and creators exist, these sections show sample content from `App\Support\Showcase`: launch-seed recipe photos and fictional creators. M3 and M4 replace it with real queries.
+  - Until real recipes and creators exist, these sections show sample content from `App\Support\Showcase`: launch-seed recipe photos and fictional creators. M3 replaced the recipes with real ones (once there are at least four public recipes) and M4 did the same for creators (at least four creators).
   - `/discover` and `/creators` are "coming soon" pages until M3 and M4.
 - **Footer:** deep green, with the logo and a one-line description on the left; Explore, Your kitchen and About link columns on the right; and a fine-print row with the copyright, "Developed by Chase Terry" and the Privacy Policy link.
 - **Motion:** quiet. Short colour and shadow transitions, a small lift on recipe cards, a logo tilt on hover, toasts that slide in. All of it is disabled under `prefers-reduced-motion`.
@@ -463,7 +473,7 @@ The launch content comes from the 21 legacy recipes in `archive-2025:database/da
 
 - Converted into a PHP data file (`database/data/recipes.php` or similar) in the new schema: hours and minutes become prep and cook minutes; each recipe gets a meal type, collections and dietary tags; each gets a stable `seed_key`.
 - **Sample creators:** about four fictional creators with friendly names, avatars and bios. They own most of the recipes. They have no password, so nobody can log in as them.
-- **Demo user:** owns about five recipes in a mix of public, unlisted and private, follows two sample creators, and has saved and rated a few recipes.
+- **Demo user:** owns about five private recipes (decision 13), follows two sample creators, and has saved and rated a few recipes.
 - Sample creators rate and save each other's recipes so averages and counts look real.
 - **Dates are relative to the seed time.** A few recipes are published "this week", so the following feed, Trending and the digest preview always have content.
 - `php artisan db:seed` builds the same data as `demo:reset` (sample creators and recipes always; the demo user when its credentials are set).
@@ -527,8 +537,8 @@ These apply to any user with `is_demo = true`. Controls are hidden in the UI **a
 - Cannot request a password reset. The forgot-password page shows the usual neutral message and sends nothing.
 - **Cannot upload files.** Instead of uploading an avatar or recipe photo, the demo user picks from a built-in gallery of the sample food photos.
 - Cannot use "Email a friend", and is never sent email (digest, notifications). The digest preview page still works.
-- Can create up to 25 recipes.
-- Can freely create, edit and delete recipes, change visibility, save, rate, follow, and edit name, bio, timezone and preferences. The nightly reset restores everything.
+- Can create up to 25 recipes, and **every one of them is private**. The visibility choice in the editor is replaced by a notice: "Demo recipes stay private, so nothing you write here is shown to other visitors." `SaveRecipe` forces `private` for demo users whatever is sent. The demo user's seed recipes are private too.
+- Can freely create, edit and delete recipes, save, rate, follow, and edit name, bio, timezone and preferences. The nightly reset restores everything.
 
 ### B11.4 `demo:reset`
 Restores the demo world in one transaction:
@@ -543,7 +553,7 @@ Restores the demo world in one transaction:
 
 **Real accounts** (made with `user:create` or registration) keep their recipes. Their saves and ratings on seed recipes survive a reset, unless the demo user deleted that seed recipe during the day.
 
-**Known risk:** anything the demo user makes public can be seen by all visitors until the next reset. Turnstile, rate limits, the 25-recipe limit and the lack of uploads keep this small. If abuse happens, a later option is to make the demo user's own new recipes private-only.
+**No public demo content:** the demo user's recipes are always private (decision 13), so nothing a visitor writes as the demo user can be seen by anyone else. The editor explains this with a notice, and `SaveRecipe` enforces it.
 
 ## B12. `php artisan user:create`
 
@@ -629,5 +639,9 @@ Answers to the v0.1 open questions (2026-11-09):
 
 ## Open questions
 
-1. **Production host.** Where will the portfolio deployment run (Forge, Laravel Cloud, or your own server)? This only affects deployment notes, not the build.
-2. **Demo user's public recipes.** OK with the risk in §B11.4, where anything the demo user publishes is visible to all visitors until midnight? The alternative is to keep the demo user's new recipes private or unlisted only.
+None open. Answered 2026-11-09:
+
+| # | Question | Decision |
+|---|----------|----------|
+| 12 | Production host | Laravel Forge. Deployment notes (M7) target a Forge site with a queue worker daemon and the scheduler. |
+| 13 | Demo user's public recipes | **The demo user's recipes are always private.** The editor shows a notice explaining why, and the server enforces it (M6). This replaces the "known risk" in §B11.4. |

@@ -155,9 +155,10 @@ final class RecipeFilters
             // Recipes without a time go last.
             RecipeSort::Quickest => $query->orderByRaw('total_minutes = 0')->orderBy('total_minutes')->orderBy('title'),
             RecipeSort::Title => $query->orderBy('title'),
+            RecipeSort::Saved => $query->orderByDesc('saved_at'),
         };
 
         // A final tie-breaker keeps "Show more" pages stable.
-        return $sorted->orderByDesc('id');
+        return $sorted->orderByDesc('recipes.id');
     }
 }

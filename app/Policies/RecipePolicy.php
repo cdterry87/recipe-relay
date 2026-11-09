@@ -33,6 +33,32 @@ class RecipePolicy
             : Response::denyAsNotFound();
     }
 
+    /**
+     * Adding to a cookbook: shareable recipes the member doesn't own.
+     */
+    public function save(User $user, Recipe $recipe): Response
+    {
+        if ($recipe->isOwnedBy($user)) {
+            return Response::deny("You can't save your own recipe. It's already in My recipes.");
+        }
+
+        return $recipe->isSaveable() ? Response::allow() : Response::denyAsNotFound();
+    }
+
+    /**
+     * Rating: only recipes the member has saved.
+     */
+    public function rate(User $user, Recipe $recipe): Response
+    {
+        $canSave = $this->save($user, $recipe);
+
+        if ($canSave->denied()) {
+            return $canSave;
+        }
+
+        return $user->hasSaved($recipe) ? Response::allow() : Response::deny('Save this recipe to your cookbook to rate it.');
+    }
+
     public function create(User $user): Response
     {
         return $user->recipes()->count() < $user->recipeLimit()

@@ -260,3 +260,11 @@ it('deletes the recipe with its photo', function () {
     expect(Recipe::count())->toBe(0);
     Storage::disk('public')->assertMissing("{$base}-1600.webp");
 });
+
+it('keeps the recipe id out of the editor', function () {
+    $recipe = Recipe::factory()->complete()->create();
+
+    $snapshot = json_encode(editor($recipe->user, $recipe)->snapshot);
+
+    expect($snapshot)->toContain($recipe->uuid)->not->toContain('"key":'.$recipe->id)->not->toContain('"mdl"');
+});

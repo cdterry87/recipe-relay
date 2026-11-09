@@ -42,3 +42,32 @@
     color: var(--color-primary-text);
     font-weight: var(--weight-bold);
 }
+
+/* The name's link covers the whole card. */
+.creator-card {
+    position: relative;
+}
+
+.creator-card__name a {
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+    }
+
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+.creator-card:has(a:focus-visible) {
+    outline: var(--focus-ring);
+}
+
+.creator-card:has(a:hover) .creator-card__name {
+    text-decoration: underline;
+}

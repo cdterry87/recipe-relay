@@ -118,3 +118,15 @@
     color: var(--color-text-muted);
     font-size: var(--text-xs);
 }
+
+.recipe-card__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: var(--weight-bold);
+
+    .icon {
+        color: var(--color-accent-word);
+        fill: currentColor;
+    }
+}

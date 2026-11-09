@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Visibility;
 use App\Models\Concerns\HasPublicUuid;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
@@ -9,7 +10,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -56,6 +59,97 @@ class User extends Authenticatable implements MustVerifyEmail
     public function recipes(): HasMany
     {
         return $this->hasMany(Recipe::class);
+    }
+
+    /**
+     * @return HasMany<Save, $this>
+     */
+    public function saves(): HasMany
+    {
+        return $this->hasMany(Save::class);
+    }
+
+    /**
+     * @return HasMany<Rating, $this>
+     */
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    /**
+     * Creators this member follows.
+     *
+     * @return BelongsToMany<User, $this, Follow, 'follow'>
+     */
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followee_id')
+            ->using(Follow::class)
+            ->as('follow')
+            ->withTimestamps();
+    }
+
+    /**
+     * Members who follow this creator.
+     *
+     * @return BelongsToMany<User, $this, Follow, 'follow'>
+     */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followee_id', 'follower_id')
+            ->using(Follow::class)
+            ->as('follow')
+            ->withTimestamps();
+    }
+
+    /**
+     * Members with at least one public recipe, with the figures creator cards show:
+     * followers_count, public_recipes_count and public_saves (saves across public recipes).
+     *
+     * @param  Builder<User>  $query
+     */
+    public function scopeCreators(Builder $query): void
+    {
+        $query
+            ->whereHas('recipes', fn (Builder $q) => $q->listed())
+            ->withCount(['followers', 'recipes as public_recipes_count' => fn (Builder $q) => $q->where('visibility', Visibility::Public)])
+            ->withSum(['recipes as public_saves' => fn (Builder $q) => $q->where('visibility', Visibility::Public)], 'saves_count');
+    }
+
+    /**
+     * Busiest first: followers, then saves, then the newest account as a stable tie-breaker.
+     *
+     * @param  Builder<User>  $query
+     */
+    public function scopeTrending(Builder $query): void
+    {
+        $query->orderByDesc('followers_count')->orderByDesc('public_saves')->orderByDesc('users.id');
+    }
+
+    public function hasSaved(Recipe $recipe): bool
+    {
+        return $this->saves()->whereBelongsTo($recipe)->exists();
+    }
+
+    public function ratingFor(Recipe $recipe): ?int
+    {
+        $stars = $this->ratings()->whereBelongsTo($recipe)->value('stars');
+
+        return $stars === null ? null : (int) $stars;
+    }
+
+    public function isFollowing(User $creator): bool
+    {
+        return $this->following()->whereKey($creator->getKey())->exists();
+    }
+
+    /**
+     * Whether others can follow this member: anyone with at least one public recipe.
+     */
+    public function isFollowable(): bool
+    {
+        return $this->recipes()->listed()->exists();
     }
 
     /**
