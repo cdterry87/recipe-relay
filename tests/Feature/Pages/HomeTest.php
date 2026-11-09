@@ -30,10 +30,10 @@ it('shows trending creators with a link to see more', function () {
 
 it('describes the core features', function () {
     $this->get(route('home'))
-        ->assertSee('Every recipe you love, in one <em>place</em>', false)
+        ->assertSee('From your kitchen to <em>theirs</em>', false)
         ->assertSee('Your recipes, your rules')
         ->assertSee('Find and save favorites')
-        ->assertSee('Follow and relay');
+        ->assertSee('Follow and pass it on');
 });
 
 it('formats durations the way cards show them', function (int $minutes, string $expected) {

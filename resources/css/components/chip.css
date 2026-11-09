@@ -33,3 +33,9 @@
     border-color: transparent;
     color: var(--color-secondary);
 }
+
+.chip--brand {
+    background: var(--color-brand);
+    border-color: transparent;
+    color: var(--color-on-brand);
+}

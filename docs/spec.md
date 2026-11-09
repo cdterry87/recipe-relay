@@ -424,28 +424,28 @@ GET  /unsubscribe/{user:uuid}       signed
 
 **Brand and look**
 
-The layout takes its cues from Pepper (peppertheapp.com), a clean editorial food site: the same kind of page structure and type pairing. The colours, name, logo, wording and images are Recipe Relay's own, so it does not look like a copy.
+The page structure and type pairing take cues from Pepper (peppertheapp.com), a clean editorial food site. The colours, name, logo, wording and images are Recipe Relay's own; no copy is taken from it.
 
-- **Name and mark:** "Recipe Relay", set as an uppercase heavy wordmark. The mark is a plum spoon passed like a relay baton, on a tangerine circle; it also works as the favicon. On the narrowest phones only the mark shows.
-- **Personality:** bright, confident and editorial, still friendly for all ages.
-- **Palette: Tangerine and Plum** (light / dark; every text pair meets AA):
-  - Page `#fcfbfd` / `#141016`; surfaces white / `#1e1a22`; a lavender-cream band `#f6f0f8` / `#1a1520`; thin borders `#ebe6ef` / `#332c39`
-  - Text `#1a1a1a` / `#f3eff6`, muted `#5c5866` / `#a9a3b1`
-  - **Tangerine** brand `#ff8a2a` (dark mode `#ff9a4a`) for panels, bands and decoration. Text on tangerine is always deep plum `#2a1235`, never white.
-  - Buttons and links use burnt orange `#c2410c` (white text 5.2:1); orange text `#b93d0b`
-  - **Plum** feature panels: a gradient from `#2a1235` to `#5b2a6e`, white text, tangerine accent words. Buttons on tangerine panels are plum.
-  - A near-black footer `#141016` in both themes
-  - Basil green `#2f7a4e` only for success states
+- **Name and mark:** "Recipe Relay", set as an uppercase heavy wordmark. The mark is a cream spoon passed like a relay baton, with apricot motion lines, on a dark green circle; it also works as the favicon. On the narrowest phones only the mark shows.
+- **Personality:** calm, warm and natural, like a good grocery store or farmers' market; friendly for all ages.
+- **Palette: grocery colours** (light / dark; every text pair meets AA):
+  - Cream pages `#faf6ee` / `#141a15`; surfaces `#fffdf8` / `#1c241d`; a light kraft-paper band `#f1e8d8` / `#1f2a21`; kraft brown `#d9c3a0` / `#4a3f2e` for the facts band; borders `#e6dccb` / `#2f3b31`
+  - Text a green-black `#23291f` / `#f1ecdf`, muted `#5f6157` / `#b3ad9c`
+  - **Dark green** `#2f5d3a` (dark mode `#8cc49a`) for buttons, links and focus rings, with white text (7.6:1)
+  - **Deep green** feature panels: a gradient from `#1f3d29` to `#36603f`, cream text, apricot accent words
+  - **Apricot** (light orange) `#f4b97c` / `#e9a868` for call-to-action panels, always with dark text. Buttons on apricot panels are deep green.
+  - Accent words in headings use a warm brown `#9a5b1f` / `#f0b47a`
+  - A deep green footer `#17261b` in both themes
 - **Type** (self-hosted through npm, no font CDN):
   - Headings: League Spartan, weight 800, uppercase, tight leading
   - One accent word per heading in DM Serif Display italic: `<h1>Welcome <em>back</em></h1>`
   - Body: Open Sans, 16px
   - Eyebrow labels: small, bold, uppercase, widely letter-spaced
 - **Shapes:** 12px buttons and fields, 16px cards with a thin border and little or no shadow, pill-shaped tags. Tags on photos are small white uppercase pills.
-- **Home page** (top to bottom): a lavender tagline band; a plum feature panel beside a tangerine call-to-action panel; **Trending recipes** (4-column recipe cards: photo with tag, title, a one-line "time · calories · saves", and the cook) with a "View more →" link; meal-type tiles; a tangerine facts band; **Trending creators** (white creator cards with ringed avatars, specialty and saves on a plum panel) with a "View more →" link; and **Every recipe you love, in one place**, a tangerine panel listing the core features beside a tilted sample recipe card.
+- **Home page** (top to bottom): a kraft tagline band; a deep green feature panel beside an apricot call-to-action panel; **Trending recipes** (4-column recipe cards: photo with tag, title, a one-line "time · calories · saves", and the cook) with a "View more →" link; meal-type tiles; a kraft-brown facts band; **Trending creators** (creator cards with ringed avatars, specialty and saves on a deep green panel) with a "View more →" link; and an apricot panel describing the core features beside a tilted sample recipe card.
   - Until real recipes and creators exist, these sections show sample content from `App\Support\Showcase`: launch-seed recipe photos and fictional creators. M3 and M4 replace it with real queries.
   - `/discover` and `/creators` are "coming soon" pages until M3 and M4.
-- **Footer:** near-black, with the logo and a one-line description on the left; Explore, Your kitchen and About link columns on the right; and a fine-print row with the copyright, "Developed by Chase Terry" and the Privacy Policy link.
+- **Footer:** deep green, with the logo and a one-line description on the left; Explore, Your kitchen and About link columns on the right; and a fine-print row with the copyright, "Developed by Chase Terry" and the Privacy Policy link.
 - **Motion:** quiet. Short colour and shadow transitions, a small lift on recipe cards, a logo tilt on hover, toasts that slide in. All of it is disabled under `prefers-reduced-motion`.
 - **Layout:** mobile-first; card grids of 1 to 4 columns; no page scrolls sideways at 320px wide.
 

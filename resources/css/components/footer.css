@@ -86,3 +86,16 @@
     gap: var(--space-1) var(--space-4);
     align-items: center;
 }
+
+/* On the green footer the mark flips to apricot so it doesn't disappear. */
+.site-footer .logo__badge {
+    fill: var(--color-on-dark-accent);
+}
+
+.site-footer .logo__spoon {
+    fill: var(--color-footer);
+}
+
+.site-footer .logo__swoosh {
+    stroke: var(--color-footer);
+}

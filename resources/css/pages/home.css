@@ -18,7 +18,7 @@
         font-family: var(--font-accent);
         font-weight: 400;
         font-style: italic;
-        color: var(--color-primary-text);
+        color: var(--color-accent-word);
     }
 }
 
@@ -55,7 +55,7 @@
         width: 70%;
         aspect-ratio: 1;
         border-radius: 50%;
-        background: radial-gradient(circle, rgb(255 138 42 / 45%), transparent 65%);
+        background: radial-gradient(circle, rgb(244 185 124 / 35%), transparent 65%);
     }
 
     & h1 {
@@ -184,8 +184,8 @@
     margin-block-start: var(--space-8);
     margin-inline: calc(50% - 50vw);
     padding: var(--space-7) var(--space-4);
-    background: var(--color-brand);
-    color: var(--color-on-brand);
+    background: var(--color-kraft);
+    color: var(--color-text);
     text-align: center;
 
     @media (min-width: 48rem) {
@@ -328,7 +328,7 @@
 
 .features__item {
     padding-inline-start: var(--space-4);
-    border-inline-start: 3px solid rgb(42 18 53 / 30%);
+    border-inline-start: 3px solid var(--color-dark);
 
     & h3 {
         font-size: var(--text-md);

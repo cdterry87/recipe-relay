@@ -44,7 +44,7 @@ h3 {
     font-weight: 400;
     font-style: italic;
     letter-spacing: 0;
-    color: var(--color-primary-text);
+    color: var(--color-accent-word);
 }
 
 p {
@@ -77,7 +77,7 @@ a {
     font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-eyebrow);
     text-transform: uppercase;
-    color: var(--color-primary-text);
+    color: var(--color-accent-word);
 }
 
 .skip-link {

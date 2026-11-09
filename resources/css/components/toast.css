@@ -33,7 +33,7 @@
 }
 
 .toast--success {
-    border-inline-start-color: var(--color-secondary);
+    border-inline-start-color: var(--color-success);
 }
 
 .toast--error {
