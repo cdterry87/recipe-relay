@@ -4,7 +4,7 @@
     /*
      * Colour: components use these semantic names, never a raw value.
      * Brand: grocery colours. Dark green for actions and deep panels, cream pages, kraft-paper
-     * brown bands, apricot (light orange) panels with dark text, and warm brown accent words.
+     * brown bands and panels with dark text, and warm brown accent words.
      * Every text pair meets WCAG AA in both themes.
      */
     --color-bg: light-dark(#faf6ee, #141a15);
@@ -18,8 +18,8 @@
     --color-text-muted: light-dark(#5f6157, #b3ad9c);
     --color-backdrop: light-dark(rgb(35 41 31 / 35%), rgb(0 0 0 / 65%));
 
-    --color-brand: light-dark(#f4b97c, #e9a868); /* apricot panels; text on them is dark */
-    --color-on-brand: light-dark(#23291f, #1b1a12);
+    --color-brand: light-dark(#f1e8d8, #2c281f); /* kraft-paper panels */
+    --color-on-brand: light-dark(#23291f, #f1ecdf);
     --color-primary: light-dark(#2f5d3a, #8cc49a);
     --color-primary-hover: light-dark(#244a2e, #a6d4b1);
     --color-on-primary: light-dark(#ffffff, #10200f);
@@ -34,12 +34,12 @@
     --color-dark: #1f3d29; /* deep green feature panels, the same in both themes */
     --color-dark-end: #36603f;
     --color-on-dark: #faf3e3;
-    --color-on-dark-accent: #f4b97c;
+    --color-on-dark-accent: #e8d6b5;
 
-    /* The logo mark: green in light mode, apricot in dark mode so it stands out. */
-    --color-logo-badge: light-dark(#1f3d29, #e9a868);
+    /* The logo mark: green in light mode, kraft in dark mode so it stands out. */
+    --color-logo-badge: light-dark(#1f3d29, #e8d6b5);
     --color-logo-spoon: light-dark(#faf3e3, #17261b);
-    --color-logo-lines: light-dark(#f4b97c, #17261b);
+    --color-logo-lines: light-dark(#d9c3a0, #17261b);
 
     --color-footer: #17261b;
     --color-on-footer: #faf3e3;

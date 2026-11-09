@@ -55,7 +55,7 @@
         width: 70%;
         aspect-ratio: 1;
         border-radius: 50%;
-        background: radial-gradient(circle, rgb(244 185 124 / 35%), transparent 65%);
+        background: radial-gradient(circle, rgb(232 214 181 / 25%), transparent 65%);
     }
 
     & h1 {
@@ -89,6 +89,7 @@
     flex-direction: column;
     gap: var(--space-4);
     padding: var(--space-6);
+    border: var(--border);
     border-radius: var(--radius-lg);
     background: var(--color-brand);
     color: var(--color-on-brand);
@@ -293,6 +294,7 @@
     align-items: center;
     margin-block-start: var(--space-8);
     padding: var(--space-6) var(--space-5);
+    border: var(--border);
     border-radius: var(--radius-xl);
     background: var(--color-brand);
     color: var(--color-on-brand);
@@ -328,7 +330,7 @@
 
 .features__item {
     padding-inline-start: var(--space-4);
-    border-inline-start: 3px solid var(--color-dark);
+    border-inline-start: 3px solid var(--color-primary);
 
     & h3 {
         font-size: var(--text-md);

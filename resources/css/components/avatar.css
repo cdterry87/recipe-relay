@@ -29,7 +29,7 @@
     --avatar-size: 7rem;
 
     border: 3px solid var(--color-surface);
-    box-shadow: 0 0 0 3px var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-kraft);
 }
 
 /* Initials sit on one of four tints, picked from the account's UUID. */

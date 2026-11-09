@@ -35,7 +35,7 @@
 }
 
 .chip--brand {
-    background: var(--color-brand);
+    background: var(--color-on-dark-accent);
     border-color: transparent;
-    color: var(--color-on-brand);
+    color: #23291f;
 }
