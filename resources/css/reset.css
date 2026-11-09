@@ -19,6 +19,12 @@ video {
     max-width: 100%;
 }
 
+/* Width and height attributes reserve space; CSS keeps the proportions. */
+img,
+video {
+    height: auto;
+}
+
 input,
 button,
 select,

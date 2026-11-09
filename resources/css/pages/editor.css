@@ -1,0 +1,205 @@
+.editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.editor__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+}
+
+.editor__help {
+    margin-block-end: var(--space-4);
+    font-size: var(--text-sm);
+}
+
+.editor__actions {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    background: linear-gradient(to top, var(--color-bg) 70%, transparent);
+}
+
+.form-row--4 {
+    @media (min-width: 40rem) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* Reorderable ingredient and step rows. */
+.rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block-end: var(--space-4);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2) var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-bg);
+    border: var(--border);
+    border-radius: var(--radius-md);
+
+    @media (min-width: 40rem) {
+        grid-template-columns: auto 1fr auto;
+        align-items: start;
+    }
+
+    &.sortable-ghost {
+        opacity: 0.4;
+    }
+}
+
+.row__handle {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    min-height: var(--control-height);
+    color: var(--color-text-muted);
+    cursor: grab;
+    touch-action: none;
+}
+
+.row__fields {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.row__fields--ingredient {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    & > :nth-child(3),
+    & > :nth-child(4) {
+        grid-column: span 2;
+    }
+
+    @media (min-width: 48rem) {
+        grid-template-columns: 5rem 6rem minmax(0, 1fr) minmax(0, 0.8fr);
+
+        & > :nth-child(3),
+        & > :nth-child(4) {
+            grid-column: auto;
+        }
+
+        & > :nth-child(5) {
+            grid-column: span 2;
+        }
+    }
+}
+
+.row__actions {
+    display: flex;
+    gap: var(--space-1);
+    grid-column: 2;
+
+    @media (min-width: 40rem) {
+        grid-column: auto;
+        flex-direction: column;
+        padding-block-start: 1.6rem;
+    }
+}
+
+/* Checkbox groups: collections and dietary tags. */
+.choices {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.choices__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-1) var(--space-3);
+}
+
+.visibility {
+    display: grid;
+    gap: var(--space-2);
+    margin-block-end: var(--space-2);
+}
+
+.visibility__option {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+
+    & > span {
+        display: flex;
+        flex-direction: column;
+        font-size: var(--text-sm);
+    }
+
+    & input {
+        width: 1.125rem;
+        height: 1.125rem;
+        margin-block-start: 0.15rem;
+        accent-color: var(--color-primary);
+    }
+
+    &:has(:checked) {
+        border-color: var(--color-primary);
+        background: var(--color-primary-subtle);
+    }
+
+    &:has(:focus-visible) {
+        outline: var(--focus-ring);
+        outline-offset: 2px;
+    }
+}
+
+.share-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-block-start: var(--space-4);
+}
+
+.share-link__row {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.photo-editor {
+    display: grid;
+    gap: var(--space-4);
+
+    @media (min-width: 40rem) {
+        grid-template-columns: 14rem 1fr;
+        align-items: start;
+    }
+
+    & input[type='file'] {
+        max-width: 100%;
+        font-size: var(--text-sm);
+    }
+}
+
+.photo-editor__preview,
+.photo-editor__empty {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+}
+
+.photo-editor__empty {
+    display: grid;
+    place-items: center;
+    background: var(--color-band);
+    font-size: 2.5rem;
+}

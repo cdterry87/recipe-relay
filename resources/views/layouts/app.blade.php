@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        @include('layouts.partials.head', ['title' => $title, 'description' => $description])
+        @include('layouts.partials.head', ['title' => $title, 'description' => $description, 'head' => $head ?? null])
     </head>
     <body class="app">
         <a class="skip-link" href="#main">Skip to content</a>

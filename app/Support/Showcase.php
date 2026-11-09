@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Recipe;
+
 /**
  * Sample content for the home page while recipes and creators are still being built.
  * The recipes and photos come from the launch seed data (section B9 of docs/spec.md);
@@ -44,13 +46,6 @@ final class Showcase
      */
     public static function duration(int $minutes): string
     {
-        if ($minutes < 60) {
-            return "{$minutes} min";
-        }
-
-        $hours = intdiv($minutes, 60);
-        $rest = $minutes % 60;
-
-        return $rest === 0 ? "{$hours}h" : "{$hours}h {$rest}m";
+        return (string) Recipe::formatMinutes($minutes);
     }
 }

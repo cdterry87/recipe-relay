@@ -10,6 +10,8 @@
     <div class="user-menu__panel" id="user-menu-list" x-show="open" x-cloak x-transition.opacity.duration.150ms>
         <p class="user-menu__name">{{ $user->name }}</p>
         <ul class="user-menu__list">
+            <li><a class="user-menu__link" href="{{ route('my.recipes') }}" wire:navigate><x-ui.icon name="book" size="sm" /> My recipes</a></li>
+            <li><a class="user-menu__link" href="{{ route('recipes.create') }}" wire:navigate><x-ui.icon name="plus" size="sm" /> New recipe</a></li>
             <li><a class="user-menu__link" href="{{ route('settings.profile') }}" wire:navigate><x-ui.icon name="user" size="sm" /> Profile</a></li>
             <li><a class="user-menu__link" href="{{ route('settings.account') }}" wire:navigate><x-ui.icon name="pencil" size="sm" /> Account</a></li>
             <li>

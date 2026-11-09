@@ -335,6 +335,7 @@ recipes
   visibility (enum: private|unlisted|public), status (enum: draft|complete),
   image_path, prep_minutes, cook_minutes, total_minutes (stored generated column),
   servings, difficulty, meal_type, cuisine, method, occasion (all enums, nullable),
+  collections (json list), dietary_tags (json list),
   calories, notes, video_url, rating_avg (decimal 3,2), rating_count, saves_count,
   published_at, seed_key (nullable, unique — links a row to the demo seed data),
   timestamps
@@ -342,8 +343,6 @@ recipes
 
 ingredients          id, uuid, recipe_id, position, section, quantity (string), unit, name, note
 steps                id, uuid, recipe_id, position, body
-recipe_collection    recipe_id, collection (enum value)      PK (recipe_id, collection)
-recipe_dietary_tag   recipe_id, tag (enum value)             PK (recipe_id, tag)
 saves                id, uuid, user_id, recipe_id, timestamps, UNIQUE (user_id, recipe_id)
 ratings              id, uuid, user_id, recipe_id, stars (1–5), timestamps, UNIQUE (user_id, recipe_id)
 follows              id, uuid, follower_id, followee_id, timestamps, UNIQUE pair; follower ≠ followee
@@ -357,7 +356,7 @@ jobs, failed_jobs, cache, sessions, password_reset_tokens   (Laravel framework t
 - Models use Laravel's `HasUuids` trait with `uniqueIds()` returning `['uuid']` (so `id` stays the primary key), and `getRouteKeyName()` returns `'uuid'`. A shared `HasPublicUuid` trait or base model sets this once.
 - UUIDs are Laravel's ordered UUIDs (UUIDv7), which index well in MySQL. Stored as `char(36)`, or `binary(16)` if indexing needs it.
 - Records are never looked up by `id` from user input. Livewire components hold the model itself or a `#[Locked]` UUID.
-- Exceptions: the two enum join tables (`recipe_collection`, `recipe_dietary_tag`) have no model and are never addressed on their own, so they have neither `id` nor `uuid`. Laravel's framework tables keep their defaults.
+- Collections and dietary tags are stored as JSON lists of enum values on `recipes` (cast with `AsEnumCollection`), not join tables. Filters use `JSON_CONTAINS`, chained for AND matching. Laravel's framework tables keep their defaults.
 - Recipes and users have no slugs or handles.
 
 Enums (PHP backed, with `label()` and `options()` helpers): `Visibility`, `RecipeStatus`, `MealType`, `Collection`, `Cuisine`, `Method`, `Difficulty`, `Occasion`, `DietaryTag`, `RecipeSort`. The vocabularies start from §A4.
@@ -400,7 +399,7 @@ GET  /unsubscribe/{user:uuid}       signed
 - **Alpine usage:** purely client-side behavior — servings scaler, check-offs, cook mode, share sheet, theme toggle, Turnstile widget, dropdowns, modals, toasts, drag-to-reorder.
 - **Domain layer:** `app/Actions/*` for writes (`SaveRecipe`, `UnsaveRecipe` — which also removes the rating, `RateRecipe`, `ToggleFollow`, `SendWeeklyDigest`). A single `RecipeFilters` class owns all filtering and sorting. Policies handle authorization.
 - **Security:** policies everywhere, allow-listed sorts, escaped text (no raw HTML anywhere), no raw video HTML, unguessable unlisted links, signed unsubscribe URLs, rate limiting, image validation and re-encoding (strips EXIF), and security headers (CSP, `X-Content-Type-Options`, `Referrer-Policy`). `TRUSTED_PROXIES` setting for running behind Cloudflare.
-- **Media:** images on the `public` disk, always re-encoded with Intervention Image (which strips EXIF data). Recipe photos are resized into a few widths (WebP) by a queued job and served with `srcset` and `loading="lazy"`. Avatars are a single 400×400 WebP, cropped from the centre while the upload is handled. Google profile pictures are not imported.
+- **Media:** images on the `public` disk, always re-encoded with Intervention Image (which strips EXIF data). Recipe photos are cropped to 4:3 and stored as 400, 800 and 1600px WebP files while the upload is handled (`App\Support\RecipeImages`), then served with `srcset` and `loading="lazy"`. Avatars are a single 400×400 WebP, cropped from the centre while the upload is handled. Google profile pictures are not imported.
 - **Mail and queues:** `database` queue. Mailpit locally; a transactional provider (Resend, as in ct-billify) in production. Markdown mail templates styled to the brand.
 - **Scheduling** (`routes/console.php`):
   - `digest:send` hourly

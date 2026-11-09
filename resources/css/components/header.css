@@ -26,3 +26,10 @@
     align-items: center;
     gap: var(--space-2);
 }
+
+/* The header's "New recipe" button is for wider screens; phones use the account menu. */
+.site-header__new {
+    @media (max-width: 40rem) {
+        display: none;
+    }
+}

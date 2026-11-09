@@ -2,6 +2,66 @@ const THEME_KEY = 'recipe-relay-theme';
 const TOAST_DURATION = 5000;
 const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
+// Unicode vulgar fractions people type into ingredient amounts.
+const FRACTIONS = { '¼': 0.25, '½': 0.5, '¾': 0.75, '⅓': 1 / 3, '⅔': 2 / 3, '⅛': 0.125 };
+const NICE = [[1 / 8, '1/8'], [1 / 4, '1/4'], [1 / 3, '1/3'], [1 / 2, '1/2'], [2 / 3, '2/3'], [3 / 4, '3/4']];
+
+// Reads "2", "1.5", "1/2", "1 1/2" or "1½". Returns null for anything else, such as "a pinch".
+const parseAmount = (text) => {
+    const value = text.trim().replace(/[¼½¾⅓⅔⅛]/g, (c) => ` ${FRACTIONS[c]}`).trim();
+    const match = value.match(/^(\d+(?:\.\d+)?)?(?:\s*(\d+)\/(\d+))?(?:\s+(0?\.\d+))?$/);
+
+    if (!match || (!match[1] && !match[2] && !match[4])) {
+        return null;
+    }
+
+    let amount = parseFloat(match[1] ?? 0);
+
+    if (match[2]) {
+        amount += parseInt(match[2], 10) / parseInt(match[3], 10);
+    }
+
+    if (match[4]) {
+        amount += parseFloat(match[4]);
+    }
+
+    return amount;
+};
+
+// Writes 1.5 as "1 1/2", 0.33 as "1/3" and 2.4 as "2.4".
+const formatAmount = (amount) => {
+    const whole = Math.floor(amount);
+    const rest = amount - whole;
+
+    if (rest < 0.04) {
+        return String(whole);
+    }
+
+    const nice = NICE.find(([value]) => Math.abs(rest - value) < 0.04);
+
+    if (nice) {
+        return whole > 0 ? `${whole} ${nice[1]}` : nice[1];
+    }
+
+    return String(Math.round(amount * 10) / 10);
+};
+
+// Scales one amount, or both ends of a range such as "2-3".
+const scaleAmount = (text, factor) => {
+    if (factor === 1) {
+        return text;
+    }
+
+    const parts = text.split(/\s*[-–]\s*/);
+    const amounts = parts.map(parseAmount);
+
+    if (amounts.some((amount) => amount === null)) {
+        return text;
+    }
+
+    return amounts.map((amount) => formatAmount(amount * factor)).join('–');
+};
+
 let turnstileScript;
 
 // Loads Cloudflare's script only when a page renders the widget.
@@ -80,6 +140,51 @@ document.addEventListener('alpine:init', () => {
                 'expired-callback': () => (this.$wire.turnstile = ''),
                 'error-callback': () => (this.$wire.turnstile = ''),
             });
+        },
+    }));
+
+    // The recipe page: servings scaler and cook mode, which keeps the screen awake where the
+    // browser allows it (the Wake Lock API).
+    Alpine.data('recipePage', (baseServings) => ({
+        servings: baseServings,
+        cooking: false,
+        awake: false,
+        lock: null,
+
+        scale(text) {
+            return baseServings > 0 ? scaleAmount(text ?? '', this.servings / baseServings) : text;
+        },
+
+        async toggleCooking() {
+            this.cooking = !this.cooking;
+
+            if (this.cooking) {
+                await this.keepAwake();
+                document.addEventListener('visibilitychange', this.rewake);
+            } else {
+                document.removeEventListener('visibilitychange', this.rewake);
+                await this.lock?.release();
+                this.lock = null;
+                this.awake = false;
+            }
+        },
+
+        async keepAwake() {
+            try {
+                this.lock = await navigator.wakeLock?.request('screen');
+                this.awake = Boolean(this.lock);
+            } catch {
+                this.awake = false;
+            }
+        },
+
+        // The browser drops the lock when the tab is hidden, so ask again on return.
+        rewake() {
+            const page = Alpine.$data(document.querySelector('.recipe'));
+
+            if (document.visibilityState === 'visible' && page.cooking) {
+                page.keepAwake();
+            }
         },
     }));
 
