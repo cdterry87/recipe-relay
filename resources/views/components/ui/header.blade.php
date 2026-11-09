@@ -2,6 +2,7 @@
     <div class="site-header__inner">
         <x-ui.logo />
         <div class="site-header__actions">
+            <a class="site-header__link" href="{{ route('discover') }}" wire:navigate @if (request()->routeIs('discover', 'collections.show')) aria-current="page" @endif>Discover</a>
             {{ $slot }}
             <x-ui.theme-toggle />
             @auth
