@@ -180,7 +180,7 @@ There is no admin role or admin area in v1.
 ### B3.1 Accounts
 - **Registration** (only when demo mode is off): name, email, password. Protected by Cloudflare Turnstile (§B13) and rate limiting. Logs the user in on success.
 - **Google sign-in** (Socialite), the only social login. When registration is open it can create an account. When registration is closed it signs in existing accounts only (matched on a verified Google email), and otherwise shows "Registration is closed".
-- **Email verification** is required before a member can publish a recipe as public or unlisted. Accounts made with `user:create` or Google are verified already.
+- **Email verification** is required before a member can publish a recipe as public or unlisted. Accounts made with `user:create` or Google are verified already. Verification links name the account by UUID (`/verify-email/{uuid}/{hash}`), are signed and expire after 60 minutes. Changing the email clears verification and sends a new link.
 - **Login** with "remember me", logout, and forgot/reset password through Laravel's `Password` broker. Real emails are sent. Forgot-password always shows the same neutral message.
 - **Profile:** display name, avatar upload (cropped to a square), short bio (≤ 280 characters), timezone.
 - **Account settings:** change email (re-verify), change password, email preferences (§B3.7), delete account (current password required; deletes their recipes, saves, ratings and follows).
@@ -290,7 +290,7 @@ Fields:
 - No cookie banner: the app uses only essential cookies (session, CSRF, remember-me) and `localStorage` for the theme.
 
 ### B3.12 Footer
-Every layout ends with this footer, with a Privacy Policy link added:
+Every layout ends with the dark footer described in §B8. Its fine-print row always contains this copyright, Privacy Policy link and credit:
 
 ```blade
 <footer class="site-footer">
@@ -400,7 +400,7 @@ GET  /unsubscribe/{user:uuid}       signed
 - **Alpine usage:** purely client-side behavior — servings scaler, check-offs, cook mode, share sheet, theme toggle, Turnstile widget, dropdowns, modals, toasts, drag-to-reorder.
 - **Domain layer:** `app/Actions/*` for writes (`SaveRecipe`, `UnsaveRecipe` — which also removes the rating, `RateRecipe`, `ToggleFollow`, `SendWeeklyDigest`). A single `RecipeFilters` class owns all filtering and sorting. Policies handle authorization.
 - **Security:** policies everywhere, allow-listed sorts, escaped text (no raw HTML anywhere), no raw video HTML, unguessable unlisted links, signed unsubscribe URLs, rate limiting, image validation and re-encoding (strips EXIF), and security headers (CSP, `X-Content-Type-Options`, `Referrer-Policy`). `TRUSTED_PROXIES` setting for running behind Cloudflare.
-- **Media:** images on the `public` disk. Resized into a few widths (WebP) by a queued job using Intervention Image; served with `srcset` and `loading="lazy"`.
+- **Media:** images on the `public` disk, always re-encoded with Intervention Image (which strips EXIF data). Recipe photos are resized into a few widths (WebP) by a queued job and served with `srcset` and `loading="lazy"`. Avatars are a single 400×400 WebP, cropped from the centre while the upload is handled. Google profile pictures are not imported.
 - **Mail and queues:** `database` queue. Mailpit locally; a transactional provider (Resend, as in ct-billify) in production. Markdown mail templates styled to the brand.
 - **Scheduling** (`routes/console.php`):
   - `digest:send` hourly
@@ -422,21 +422,32 @@ GET  /unsubscribe/{user:uuid}       signed
 - Blade components (`<x-button>`, `<x-card>`, `<x-chip>`, `<x-star-rating>`, `<x-modal>`, `<x-toast>`, `<x-avatar>`, `<x-field>`) keep markup and styling consistent.
 - Icons: Blade SVG icon components drawn in one consistent rounded-stroke style.
 
-**Brand (no existing branding; this is the starting direction)**
-- **Name and mark:** "Recipe Relay". Logo idea: a wooden spoon passed like a relay baton, with a small motion swoosh, in a rounded badge. It must work in one color for the favicon.
-- **Personality:** warm, playful and tidy — "a bright kitchen on a Saturday morning".
-- **Palette (starting point; final values must pass AA contrast):**
-  - Primary — Tomato `#E8553D`
-  - Secondary — Basil `#3E8E5E`
-  - Accent — Butter `#F6C445`
-  - Surfaces — Cream `#FFF8EE` and white
-  - Text — Charcoal `#2B2622`
-  - Dark mode uses a warm charcoal surface (around `#1F1B18`), not pure black.
-- **Type:** a rounded, friendly display face for headings ("Fredoka" or "Nunito") and a highly legible sans for body text ("Atkinson Hyperlegible" or "Inter"). Fonts are self-hosted. Base size 18px.
-- **Shapes:** generous radius (16–24px cards, pill buttons and chips), soft layered shadows.
-- **Motion:** springy hover lifts on cards, a heart "pop" on save, a star sparkle on rating, and a small confetti burst on the first published recipe. All of it is disabled under `prefers-reduced-motion`.
-- **Illustration:** friendly food doodles for empty states and error pages, such as an empty pot for 404.
-- **Layout:** mobile-first; card grid with `repeat(auto-fill, minmax(16rem, 1fr))`; sticky top bar plus a bottom tab bar on mobile (Home, Discover, Add, Cookbook, Me). No page scrolls sideways at 320px wide.
+**Brand and look**
+
+The page structure and type pairing take cues from Pepper (peppertheapp.com), a clean editorial food site. The colours, name, logo, wording and images are Recipe Relay's own; no copy is taken from it.
+
+- **Name and mark:** "Recipe Relay", set as an uppercase heavy wordmark. The mark is a cream spoon passed like a relay baton, with kraft-brown motion lines, on a dark green circle (kraft in dark mode and on the footer); it also works as the favicon. On the narrowest phones only the mark shows.
+- **Personality:** calm, warm and natural, like a good grocery store or farmers' market; friendly for all ages.
+- **Palette: grocery colours** (light / dark; every text pair meets AA):
+  - Cream pages `#faf6ee` / `#141a15`; surfaces `#fffdf8` / `#1c241d`; a light kraft-paper band `#f1e8d8` / `#1f2a21`; kraft brown `#d9c3a0` / `#4a3f2e` for the facts band; borders `#e6dccb` / `#2f3b31`
+  - Text a green-black `#23291f` / `#f1ecdf`, muted `#5f6157` / `#b3ad9c`
+  - **Dark green** `#2f5d3a` (dark mode `#8cc49a`) for buttons, links and focus rings, with white text (7.6:1)
+  - **Deep green** feature panels: a gradient from `#1f3d29` to `#36603f`, cream text, light kraft accent words `#e8d6b5`
+  - **Kraft-paper panels** `#f1e8d8` / `#2c281f` with a thin border for call-to-action and features panels, with dark text (light text in dark mode). Buttons on them are deep green. No orange is used anywhere.
+  - Accent words in headings use a warm brown `#9a5b1f` / `#f0b47a`
+  - A deep green footer `#17261b` in both themes
+- **Type** (self-hosted through npm, no font CDN):
+  - Headings: League Spartan, weight 800, uppercase, tight leading
+  - One accent word per heading in DM Serif Display italic: `<h1>Welcome <em>back</em></h1>`
+  - Body: Open Sans, 16px
+  - Eyebrow labels: small, bold, uppercase, widely letter-spaced
+- **Shapes:** 12px buttons and fields, 16px cards with a thin border and little or no shadow, pill-shaped tags. Tags on photos are small white uppercase pills.
+- **Home page** (top to bottom): a kraft tagline band; a deep green feature panel beside a kraft-paper call-to-action panel; **Trending recipes** (4-column recipe cards: photo with tag, title, a one-line "time · calories · saves", and the cook) with a "View more →" link; meal-type tiles; a kraft-brown facts band; **Trending creators** (creator cards with ringed avatars, specialty and saves on a deep green panel) with a "View more →" link; and a kraft-paper panel describing the core features beside a tilted sample recipe card.
+  - Until real recipes and creators exist, these sections show sample content from `App\Support\Showcase`: launch-seed recipe photos and fictional creators. M3 and M4 replace it with real queries.
+  - `/discover` and `/creators` are "coming soon" pages until M3 and M4.
+- **Footer:** deep green, with the logo and a one-line description on the left; Explore, Your kitchen and About link columns on the right; and a fine-print row with the copyright, "Developed by Chase Terry" and the Privacy Policy link.
+- **Motion:** quiet. Short colour and shadow transitions, a small lift on recipe cards, a logo tilt on hover, toasts that slide in. All of it is disabled under `prefers-reduced-motion`.
+- **Layout:** mobile-first; card grids of 1 to 4 columns; no page scrolls sideways at 320px wide.
 
 **Accessibility checklist**
 - Semantic landmarks, a skip link, and visible focus rings (`:focus-visible`).

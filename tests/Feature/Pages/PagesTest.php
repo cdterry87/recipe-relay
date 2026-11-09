@@ -3,14 +3,14 @@
 it('shows the home page', function () {
     $this->get(route('home'))
         ->assertOk()
-        ->assertSee('Pass along the recipes you', false)
+        ->assertSee('Cook it. Love it. <em>Relay it.</em>', false)
         ->assertSee('<a class="skip-link" href="#main">Skip to content</a>', false);
 });
 
 it('shows the privacy policy', function () {
     $this->get(route('privacy-policy'))
         ->assertOk()
-        ->assertSee('<h1>Privacy Policy</h1>', false)
+        ->assertSee('<h1>Privacy <em>policy</em></h1>', false)
         ->assertSee('portfolio application that is not intended for public use')
         ->assertSee('Cloudflare Turnstile');
 });
@@ -32,6 +32,14 @@ it('hides the style guide in production', function () {
     app()->detectEnvironment(fn () => 'production');
 
     $this->get(route('styleguide'))->assertNotFound();
+});
+
+it('offers sign-up while registration is open and the demo while it is closed', function () {
+    $this->get(route('home'))->assertSee('Create a free account')->assertDontSee('Try the demo');
+
+    config(['relay.demo_mode' => true]);
+
+    $this->get(route('home'))->assertSee('Try the demo')->assertDontSee('Create a free account');
 });
 
 it('answers the health check', function () {

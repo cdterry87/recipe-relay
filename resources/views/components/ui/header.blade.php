@@ -4,6 +4,16 @@
         <div class="site-header__actions">
             {{ $slot }}
             <x-ui.theme-toggle />
+            @auth
+                <x-ui.user-menu />
+            @else
+                @unless (request()->routeIs('login'))
+                    <x-ui.button variant="ghost" size="sm" :href="route('login')">Log in</x-ui.button>
+                @endunless
+                @if (App\Support\Registration::open() && ! request()->routeIs('register'))
+                    <x-ui.button size="sm" :href="route('register')">Sign up</x-ui.button>
+                @endif
+            @endauth
         </div>
     </div>
 </header>

@@ -6,10 +6,6 @@
         "build": "vite build",
         "dev": "vite"
     },
-    "dependencies": {
-        "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
-        "@fontsource-variable/fredoka": "^5.3.0"
-    },
     "devDependencies": {
         "concurrently": "^10.0.3",
         "laravel-vite-plugin": "^3.1",
@@ -17,5 +13,10 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "@fontsource-variable/league-spartan": "^5.3.0",
+        "@fontsource-variable/open-sans": "^5.3.0",
+        "@fontsource/dm-serif-display": "^5.3.0"
     }
 }

@@ -2,16 +2,16 @@
     display: inline-flex;
     gap: 2px;
     padding: 3px;
-    background: var(--color-surface-hover);
-    border-radius: var(--radius-full);
+    border: var(--border);
+    border-radius: var(--radius-md);
 }
 
 .theme-toggle__option {
     display: grid;
     place-items: center;
-    width: var(--control-height-sm);
-    height: var(--control-height-sm);
-    border-radius: var(--radius-full);
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-sm);
     color: var(--color-text-muted);
     cursor: pointer;
     transition:
@@ -23,9 +23,8 @@
     }
 
     &:has(:checked) {
-        background: var(--color-surface);
+        background: var(--color-primary-subtle);
         color: var(--color-primary-text);
-        box-shadow: var(--shadow-sm);
     }
 
     &:has(:focus-visible) {

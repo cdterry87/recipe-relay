@@ -1,7 +1,7 @@
-<x-layouts::app title="Privacy Policy" reading>
+<x-layouts::app title="Privacy Policy" width="reading">
     <x-ui.card class="legal">
         <header class="legal__header">
-            <h1>Privacy Policy</h1>
+            <h1>Privacy <em>policy</em></h1>
             <p class="legal__meta">Effective November 9, 2026</p>
         </header>
 

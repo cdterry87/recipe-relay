@@ -30,6 +30,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'timezone' => 'UTC',
         ];
     }
 
@@ -41,5 +42,26 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * An account made with Google sign-in, which has no password.
+     */
+    public function google(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'password' => null,
+            'google_id' => (string) fake()->unique()->randomNumber(9, true),
+        ]);
+    }
+
+    public function demo(): static
+    {
+        return $this->state(['is_demo' => true]);
+    }
+
+    public function sample(): static
+    {
+        return $this->state(['is_sample' => true, 'password' => null]);
     }
 }

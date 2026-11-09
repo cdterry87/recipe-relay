@@ -8,5 +8,5 @@
         </g>
         <path class="logo__swoosh" d="M6.5 25.5l4.5-4.5M9.5 31l4-4" />
     </svg>
-    {{ config('app.name') }}
+    <span class="logo__text">{{ config('app.name') }}</span>
 </a>

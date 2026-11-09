@@ -1,18 +1,101 @@
+/* The dark site footer: brand on the left, link columns on the right, and a fine-print row. */
 .site-footer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: var(--space-1) var(--space-4);
-    padding: var(--space-5) var(--space-4);
-    border-block-start: var(--border);
+    background: var(--color-footer);
+    color: var(--color-on-footer-muted);
     font-size: var(--text-sm);
-    color: var(--color-text-muted);
 
     & a {
-        /* Padding lifts the small links to a 24px touch target. */
+        color: var(--color-on-footer);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.site-footer__inner {
+    display: grid;
+    gap: var(--space-6);
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: var(--space-8) var(--space-4) var(--space-6);
+
+    @media (min-width: 48rem) {
+        grid-template-columns: 1.4fr repeat(3, 1fr);
+        padding-inline: var(--space-6);
+    }
+}
+
+.site-footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 22rem;
+
+    & .logo {
+        color: var(--color-on-footer);
+    }
+}
+
+.site-footer__heading {
+    margin-block-end: var(--space-3);
+    color: var(--color-on-footer-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+}
+
+.site-footer__links {
+    display: flex;
+    flex-direction: column;
+
+    & a {
+        /* Padding lifts the links to a 24px touch target. */
         display: inline-block;
         padding-block: var(--space-1);
-        color: inherit;
     }
+}
+
+.site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-5);
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: var(--space-5) var(--space-4);
+    border-block-start: 1px solid rgb(255 255 255 / 12%);
+    font-size: var(--text-xs);
+
+    @media (min-width: 48rem) {
+        padding-inline: var(--space-6);
+    }
+
+    & a {
+        display: inline-block;
+        padding-block: var(--space-1);
+    }
+}
+
+.site-footer__credits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    align-items: center;
+}
+
+/* On the green footer the mark flips to kraft so it doesn't disappear. */
+.site-footer .logo__badge {
+    fill: var(--color-on-dark-accent);
+}
+
+.site-footer .logo__spoon {
+    fill: var(--color-footer);
+}
+
+.site-footer .logo__swoosh {
+    stroke: var(--color-footer);
 }

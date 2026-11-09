@@ -19,6 +19,21 @@
     max-width: var(--reading-width);
 }
 
+.app__main--narrow {
+    max-width: var(--narrow-width);
+}
+
+/* Two fields side by side on wider screens. */
+.form-row {
+    display: grid;
+    gap: var(--space-4);
+    align-items: start;
+
+    @media (min-width: 30rem) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 .stack {
     display: flex;
     flex-direction: column;

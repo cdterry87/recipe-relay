@@ -1,12 +1,13 @@
 .notice {
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
-    background: var(--color-secondary-subtle);
+    background: var(--color-primary-subtle);
     font-size: var(--text-sm);
 }
 
 .notice--info {
-    background: var(--color-accent-subtle);
+    background: var(--color-band);
+    border: var(--border);
 }
 
 .notice--error {
