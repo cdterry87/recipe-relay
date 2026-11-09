@@ -3,34 +3,38 @@
 
     /*
      * Colour: components use these semantic names, never a raw value.
-     * Brand: Coral on clean near-white, with warm cream bands and near-black text.
-     * Every text pair meets WCAG AA in both themes. Bright coral (--color-brand) is for
-     * decoration and large text only; buttons and links use the deeper --color-primary.
+     * Brand: Tangerine and Plum. Tangerine carries dark plum text, never white; buttons and
+     * links use a deeper burnt orange. Every text pair meets WCAG AA in both themes.
      */
-    --color-bg: light-dark(#fcfcfc, #161413);
-    --color-surface: light-dark(#ffffff, #211e1c);
-    --color-surface-hover: light-dark(#f5f3f1, #2a2523);
-    --color-band: light-dark(#f8f3ee, #1d1a18);
-    --color-border: light-dark(#e8e8e8, #34302d);
-    --color-border-strong: light-dark(#8c8c8c, #8a817b);
-    --color-text: light-dark(#1a1a1a, #f2f2f2);
-    --color-text-muted: light-dark(#5c5c5c, #a8a29e);
-    --color-backdrop: light-dark(rgb(26 26 26 / 35%), rgb(0 0 0 / 65%));
+    --color-bg: light-dark(#fcfbfd, #141016);
+    --color-surface: light-dark(#ffffff, #1e1a22);
+    --color-surface-hover: light-dark(#f4f0f6, #29232e);
+    --color-band: light-dark(#f6f0f8, #1a1520);
+    --color-border: light-dark(#ebe6ef, #332c39);
+    --color-border-strong: light-dark(#8b8494, #8a8292);
+    --color-text: light-dark(#1a1a1a, #f3eff6);
+    --color-text-muted: light-dark(#5c5866, #a9a3b1);
+    --color-backdrop: light-dark(rgb(26 18 38 / 35%), rgb(0 0 0 / 65%));
 
-    --color-brand: light-dark(#ff5d52, #ff7a70);
-    --color-on-brand: light-dark(#ffffff, #1a0b09);
-    --color-primary: light-dark(#d63c31, #ff7a70);
-    --color-primary-hover: light-dark(#bd3329, #ff968e);
-    --color-on-primary: light-dark(#ffffff, #1a0b09);
-    --color-primary-text: light-dark(#c7352b, #ff7a70);
-    --color-primary-subtle: light-dark(#fff0ee, #3a211d);
+    --color-brand: light-dark(#ff8a2a, #ff9a4a);
+    --color-on-brand: #2a1235;
+    --color-primary: light-dark(#c2410c, #ff9a4a);
+    --color-primary-hover: light-dark(#a8360a, #ffb070);
+    --color-on-primary: light-dark(#ffffff, #1c0d02);
+    --color-primary-text: light-dark(#b93d0b, #ffb070);
+    --color-primary-subtle: light-dark(#fff1e6, #3a2418);
 
     --color-secondary: light-dark(#2f7a4e, #7fcb9a);
     --color-secondary-subtle: light-dark(#e3f2e8, #1f3327);
 
-    --color-dark: #2b2522; /* the deep feature panels, the same in both themes */
-    --color-dark-end: #5a4f4a;
+    --color-dark: #2a1235; /* deep plum feature panels, the same in both themes */
+    --color-dark-end: #5b2a6e;
     --color-on-dark: #ffffff;
+    --color-on-dark-accent: #ff9a4a;
+
+    --color-footer: #141016;
+    --color-on-footer: #ffffff;
+    --color-on-footer-muted: #b8b2bf;
 
     --color-negative: light-dark(#b3261e, #ff8f87);
     --color-negative-subtle: light-dark(#fde7e5, #4a2422);

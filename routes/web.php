@@ -9,6 +9,23 @@ Route::view('/', 'pages.home')->name('home');
 
 Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
 
+// Placeholders until Discover (M3) and creator pages (M4) arrive.
+Route::view('/discover', 'pages.coming-soon', [
+    'title' => 'Discover recipes',
+    'eyebrow' => 'Coming soon',
+    'heading' => 'Discover <em>recipes</em>',
+    'emoji' => '🔎',
+    'message' => 'Search and filter public recipes by meal, collection, time and star rating. The kitchen is still warming up!',
+])->name('discover');
+
+Route::view('/creators', 'pages.coming-soon', [
+    'title' => 'Trending creators',
+    'eyebrow' => 'Coming soon',
+    'heading' => 'Trending <em>creators</em>',
+    'emoji' => '👩‍🍳',
+    'message' => 'Meet the cooks behind the recipes and follow the ones you love. They are still prepping their kitchens.',
+])->name('creators');
+
 Route::middleware('guest')->group(function () {
     Route::livewire('/login', 'pages::auth.login')->name('login');
     Route::livewire('/register', 'pages::auth.register')->middleware('registration.enabled')->name('register');

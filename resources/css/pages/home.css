@@ -55,7 +55,7 @@
         width: 70%;
         aspect-ratio: 1;
         border-radius: 50%;
-        background: radial-gradient(circle, rgb(255 93 82 / 55%), transparent 65%);
+        background: radial-gradient(circle, rgb(255 138 42 / 45%), transparent 65%);
     }
 
     & h1 {
@@ -64,7 +64,7 @@
     }
 
     & h1 em {
-        color: var(--color-brand);
+        color: var(--color-on-dark-accent);
     }
 
     & p {
@@ -95,7 +95,6 @@
 
     & .eyebrow {
         color: inherit;
-        opacity: 0.85;
     }
 
     & h2 {
@@ -210,13 +209,52 @@
     text-transform: uppercase;
 }
 
-/* Dark panel with the three steps. */
-.steps {
+/* Heading on the left, a "View more" link on the right. */
+.section__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 1.5rem;
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+/* Trending recipes: 1, 2 or 4 columns. */
+.card-grid {
+    display: grid;
+    gap: var(--space-4);
+
+    @media (min-width: 36rem) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 60rem) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-5);
+    }
+}
+
+/* Deep plum panel holding white creator cards. */
+.creators-panel {
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
     margin-block-start: var(--space-8);
-    padding: var(--space-6);
+    padding: var(--space-6) var(--space-5);
     border-radius: var(--radius-xl);
     background: linear-gradient(120deg, var(--color-dark), var(--color-dark-end));
     color: var(--color-on-dark);
@@ -226,7 +264,11 @@
     }
 
     & h2 em {
-        color: inherit;
+        color: var(--color-on-dark-accent);
+    }
+
+    & .more-link {
+        color: var(--color-on-dark);
     }
 
     @media (min-width: 48rem) {
@@ -234,41 +276,113 @@
     }
 }
 
-.steps__list {
+.creators-panel__list {
     display: grid;
     gap: var(--space-4);
-    counter-reset: step;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    @media (min-width: 48rem) {
-        grid-template-columns: repeat(3, 1fr);
+    @media (min-width: 60rem) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 
-.step {
+/* Tangerine features panel: the list on the left, a sample card on the right. */
+.features {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+    margin-block-start: var(--space-8);
+    padding: var(--space-6) var(--space-5);
+    border-radius: var(--radius-xl);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+
+    & h2 {
+        font-size: var(--text-2xl);
+    }
+
+    & h2 em {
+        color: inherit;
+    }
+
+    @media (min-width: 48rem) {
+        padding: var(--space-7);
+    }
+
+    @media (min-width: 60rem) {
+        grid-template-columns: 1.3fr 1fr;
+    }
+}
+
+.features__copy {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    padding: var(--space-5);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    color: var(--color-text);
-    counter-increment: step;
+    gap: var(--space-5);
+}
 
-    &::before {
-        content: counter(step);
-        display: grid;
-        place-items: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        background: var(--color-primary-subtle);
-        color: var(--color-primary-text);
-        font-family: var(--font-display);
-        font-weight: var(--weight-heavy);
+.features__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.features__item {
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid rgb(42 18 53 / 30%);
+
+    & h3 {
+        font-size: var(--text-md);
     }
 
     & p {
-        color: var(--color-text-muted);
+        margin-block-start: var(--space-1);
         font-size: var(--text-sm);
     }
+}
+
+.features__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.features__note {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+}
+
+/* A tilted sample recipe card standing in for an app screenshot. */
+.features__art {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 20rem);
+
+    & .recipe-card {
+        transform: rotate(3deg);
+        box-shadow: var(--shadow-lg);
+        border: 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        & .recipe-card:hover {
+            transform: rotate(0);
+        }
+    }
+}
+
+.features__badge {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: -1rem;
+    inset-inline-end: -0.75rem;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    background: var(--color-dark);
+    color: var(--color-on-dark);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: rotate(-6deg);
 }

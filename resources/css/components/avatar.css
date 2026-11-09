@@ -12,6 +12,10 @@
     line-height: 1;
 }
 
+.avatar--xs {
+    --avatar-size: 1.5rem;
+}
+
 .avatar--sm {
     --avatar-size: 2.25rem;
 }

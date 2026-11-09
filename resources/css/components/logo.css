@@ -29,15 +29,15 @@
 }
 
 .logo__spoon {
-    fill: #ffffff;
+    fill: var(--color-on-brand);
 }
 
 .logo__swoosh {
     fill: none;
-    stroke: #ffffff;
+    stroke: var(--color-on-brand);
     stroke-width: 1.6;
     stroke-linecap: round;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 /* On the narrowest phones only the mark shows; the name stays for screen readers. */

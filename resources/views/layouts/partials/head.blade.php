@@ -8,7 +8,7 @@
 @endif
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#ff5d52">
+<meta name="theme-color" content="#ff8a2a">
 {{-- Runs before first paint so a saved theme never flashes the wrong colours. --}}
 <script>
     try {

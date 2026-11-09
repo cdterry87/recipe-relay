@@ -48,23 +48,23 @@
     }
 }
 
-/* For use on a coral or dark panel. */
+/* Deep plum, for use on a tangerine panel. The same in both themes. */
 .btn--inverse {
-    background: var(--color-surface);
-    color: var(--color-text);
+    background: var(--color-dark);
+    color: var(--color-on-dark);
 
     &:hover {
-        background: var(--color-surface-hover);
+        background: var(--color-dark-end);
     }
 }
 
 .btn--outline-inverse {
-    border-color: rgb(255 255 255 / 70%);
-    color: #ffffff;
-    background: rgb(255 255 255 / 12%);
+    border-color: currentColor;
+    color: inherit;
+    background: transparent;
 
     &:hover {
-        background: rgb(255 255 255 / 22%);
+        background: rgb(255 255 255 / 25%);
     }
 }
 

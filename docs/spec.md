@@ -290,7 +290,7 @@ Fields:
 - No cookie banner: the app uses only essential cookies (session, CSRF, remember-me) and `localStorage` for the theme.
 
 ### B3.12 Footer
-Every layout ends with this footer, with a Privacy Policy link added:
+Every layout ends with the dark footer described in §B8. Its fine-print row always contains this copyright, Privacy Policy link and credit:
 
 ```blade
 <footer class="site-footer">
@@ -424,27 +424,30 @@ GET  /unsubscribe/{user:uuid}       signed
 
 **Brand and look**
 
-The visual direction takes its cues from Pepper (peppertheapp.com): a clean, editorial food site. Recipe Relay uses the same kind of layout, type pairing and colour mood, but keeps its own name, logo, wording and images.
+The layout takes its cues from Pepper (peppertheapp.com), a clean editorial food site: the same kind of page structure and type pairing. The colours, name, logo, wording and images are Recipe Relay's own, so it does not look like a copy.
 
-- **Name and mark:** "Recipe Relay", set as an uppercase heavy wordmark. The mark is a white spoon passed like a relay baton, on a coral circle; it also works as the favicon. On the narrowest phones only the mark shows.
+- **Name and mark:** "Recipe Relay", set as an uppercase heavy wordmark. The mark is a plum spoon passed like a relay baton, on a tangerine circle; it also works as the favicon. On the narrowest phones only the mark shows.
 - **Personality:** bright, confident and editorial, still friendly for all ages.
-- **Palette** (light / dark; every text pair meets AA):
-  - Page `#fcfcfc` / `#161413`; surfaces white / `#211e1c`; a warm cream band `#f8f3ee` / `#1d1a18`; thin borders `#e8e8e8` / `#34302d`
-  - Text `#1a1a1a` / `#f2f2f2`, muted `#5c5c5c` / `#a8a29e`
-  - **Coral** brand `#ff5d52` (dark mode `#ff7a70`) for large text, bands and decoration. White text on it only at large sizes.
-  - Buttons and links use a deeper coral `#d63c31` (white text 4.6:1); coral text `#c7352b`
-  - Deep warm feature panels: a gradient from `#2b2522` to `#5a4f4a`
+- **Palette: Tangerine and Plum** (light / dark; every text pair meets AA):
+  - Page `#fcfbfd` / `#141016`; surfaces white / `#1e1a22`; a lavender-cream band `#f6f0f8` / `#1a1520`; thin borders `#ebe6ef` / `#332c39`
+  - Text `#1a1a1a` / `#f3eff6`, muted `#5c5866` / `#a9a3b1`
+  - **Tangerine** brand `#ff8a2a` (dark mode `#ff9a4a`) for panels, bands and decoration. Text on tangerine is always deep plum `#2a1235`, never white.
+  - Buttons and links use burnt orange `#c2410c` (white text 5.2:1); orange text `#b93d0b`
+  - **Plum** feature panels: a gradient from `#2a1235` to `#5b2a6e`, white text, tangerine accent words. Buttons on tangerine panels are plum.
+  - A near-black footer `#141016` in both themes
   - Basil green `#2f7a4e` only for success states
 - **Type** (self-hosted through npm, no font CDN):
   - Headings: League Spartan, weight 800, uppercase, tight leading
-  - One accent word per heading in DM Serif Display italic, in coral: `<h1>Welcome <em>back</em></h1>`
+  - One accent word per heading in DM Serif Display italic: `<h1>Welcome <em>back</em></h1>`
   - Body: Open Sans, 16px
-  - Eyebrow labels: small, bold, uppercase, widely letter-spaced, in coral
-- **Shapes:** 12px buttons and fields, 16px cards with a thin border and little or no shadow, pill-shaped search and tags. Tags on images are small uppercase pills (coral, or white).
-- **Page patterns:** a white sticky header; a cream tagline or search band under it; a large dark feature panel beside a coral call-to-action panel; full-width coral bands for short facts; dark panels holding white cards; recipe cards with the photo on top and a compact line of time, calories and saves.
-- **Motion:** quiet. Short colour and shadow transitions, a small logo tilt on hover, toasts that slide in. All of it is disabled under `prefers-reduced-motion`.
-- **Illustration:** emoji and simple flat doodles (such as the empty pot on error pages) until recipe photos exist.
-- **Layout:** mobile-first; card grids of 2, 3 or 6 columns; no page scrolls sideways at 320px wide.
+  - Eyebrow labels: small, bold, uppercase, widely letter-spaced
+- **Shapes:** 12px buttons and fields, 16px cards with a thin border and little or no shadow, pill-shaped tags. Tags on photos are small white uppercase pills.
+- **Home page** (top to bottom): a lavender tagline band; a plum feature panel beside a tangerine call-to-action panel; **Trending recipes** (4-column recipe cards: photo with tag, title, a one-line "time · calories · saves", and the cook) with a "View more →" link; meal-type tiles; a tangerine facts band; **Trending creators** (white creator cards with ringed avatars, specialty and saves on a plum panel) with a "View more →" link; and **Every recipe you love, in one place**, a tangerine panel listing the core features beside a tilted sample recipe card.
+  - Until real recipes and creators exist, these sections show sample content from `App\Support\Showcase`: launch-seed recipe photos and fictional creators. M3 and M4 replace it with real queries.
+  - `/discover` and `/creators` are "coming soon" pages until M3 and M4.
+- **Footer:** near-black, with the logo and a one-line description on the left; Explore, Your kitchen and About link columns on the right; and a fine-print row with the copyright, "Developed by Chase Terry" and the Privacy Policy link.
+- **Motion:** quiet. Short colour and shadow transitions, a small lift on recipe cards, a logo tilt on hover, toasts that slide in. All of it is disabled under `prefers-reduced-motion`.
+- **Layout:** mobile-first; card grids of 1 to 4 columns; no page scrolls sideways at 320px wide.
 
 **Accessibility checklist**
 - Semantic landmarks, a skip link, and visible focus rings (`:focus-visible`).

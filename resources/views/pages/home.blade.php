@@ -1,5 +1,6 @@
 @php
     $signUpOpen = App\Support\Registration::open();
+    $recipes = App\Support\Showcase::recipes();
     $meals = [
         ['Breakfast', '🥞'], ['Lunch', '🥪'], ['Dinner', '🍝'],
         ['Dessert', '🍰'], ['Quick & Easy', '⏱️'], ['Slow Cook', '🍲'],
@@ -42,6 +43,29 @@
         </aside>
     </div>
 
+    <section class="section" aria-labelledby="recipes-title">
+        <div class="section__top">
+            <header class="section__header">
+                <p class="eyebrow">What everyone's cooking</p>
+                <h2 id="recipes-title">Trending <em>recipes</em></h2>
+            </header>
+            <a class="more-link" href="{{ route('discover') }}">View more <span aria-hidden="true">→</span><span class="visually-hidden"> trending recipes</span></a>
+        </div>
+        <div class="card-grid">
+            @foreach ($recipes as $recipe)
+                <x-recipe.card
+                    :title="$recipe['title']"
+                    :image="asset('images/samples/'.$recipe['image'].'.webp')"
+                    :tag="$recipe['tag']"
+                    :minutes="$recipe['minutes']"
+                    :calories="$recipe['calories']"
+                    :saves="$recipe['saves']"
+                    :by="$recipe['by']"
+                />
+            @endforeach
+        </div>
+    </section>
+
     <section class="section" aria-labelledby="meals-title">
         <header class="section__header">
             <p class="eyebrow">Something for every appetite</p>
@@ -73,24 +97,56 @@
         </div>
     </section>
 
-    <section class="steps" aria-labelledby="steps-title">
-        <header class="section__header">
-            <p class="eyebrow">How it works</p>
-            <h2 id="steps-title">Pass the <em>spoon</em></h2>
-        </header>
-        <ol class="steps__list">
-            <li class="step">
-                <h3>Save your recipes</h3>
-                <p>Add ingredients and steps, then keep them private, share them by link, or make them public.</p>
-            </li>
-            <li class="step">
-                <h3>Follow great cooks</h3>
-                <p>Find recipes from people you like and get a weekly email with what they've posted.</p>
-            </li>
-            <li class="step">
-                <h3>Relay the good ones</h3>
-                <p>Rate what you've saved, and share your favorites by email or on social media.</p>
-            </li>
-        </ol>
+    <section class="creators-panel" aria-labelledby="creators-title">
+        <div class="section__top">
+            <header class="section__header">
+                <p class="eyebrow">Real people sharing real recipes</p>
+                <h2 id="creators-title">Trending <em>creators</em></h2>
+            </header>
+            <a class="more-link" href="{{ route('creators') }}">View more <span aria-hidden="true">→</span><span class="visually-hidden"> trending creators</span></a>
+        </div>
+        <div class="creators-panel__list">
+            @foreach (App\Support\Showcase::creators() as $creator)
+                <x-creator.card :name="$creator['name']" :specialty="$creator['specialty']" :saves="$creator['saves']" :recipes="$creator['recipes']" />
+            @endforeach
+        </div>
+    </section>
+
+    <section class="features" aria-labelledby="features-title">
+        <div class="features__copy">
+            <h2 id="features-title">Every recipe you love, in one <em>place</em></h2>
+            <ul class="features__list">
+                <li class="features__item">
+                    <h3>Your recipes, your rules</h3>
+                    <p>Write down ingredients and steps, then keep each recipe private, share it with an unlisted link, or make it public for everyone.</p>
+                </li>
+                <li class="features__item">
+                    <h3>Find and save favorites</h3>
+                    <p>Search by meal, collection, time and star rating, save what looks good to your cookbook, and rate what you've tried.</p>
+                </li>
+                <li class="features__item">
+                    <h3>Follow and relay</h3>
+                    <p>Follow cooks you love, get a weekly digest of what they've posted, and share recipes by email or on social media.</p>
+                </li>
+            </ul>
+            <div class="features__actions">
+                @auth
+                    <x-ui.button variant="inverse" :href="route('settings.profile')">Set up your profile</x-ui.button>
+                @else
+                    @if ($signUpOpen)
+                        <x-ui.button variant="inverse" :href="route('register')">Create a free account</x-ui.button>
+                    @else
+                        <x-ui.button variant="inverse" :href="route('login')">Try the demo</x-ui.button>
+                    @endif
+                    <x-ui.button variant="outline-inverse" :href="route('discover')">Browse recipes</x-ui.button>
+                @endauth
+            </div>
+            <p class="features__note">Free · Private by default · No ads</p>
+        </div>
+        <div class="features__art" aria-hidden="true">
+            <span class="features__badge">Saved to your cookbook</span>
+            <x-recipe.card :title="$recipes[1]['title']" :image="asset('images/samples/'.$recipes[1]['image'].'.webp')" :tag="$recipes[1]['tag']"
+                :minutes="$recipes[1]['minutes']" :calories="$recipes[1]['calories']" :saves="$recipes[1]['saves']" :by="$recipes[1]['by']" />
+        </div>
     </section>
 </x-layouts::app>
