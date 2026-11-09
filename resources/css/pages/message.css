@@ -1,0 +1,31 @@
+/* A short centered message, such as the unsubscribe page. */
+.message-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding-block: var(--space-8);
+    text-align: center;
+}
+
+.message-page__art {
+    font-size: 3.5rem;
+    line-height: 1;
+}
+
+/* The digest preview shows the real email, which brings its own light-only inline styles. */
+.digest-frame {
+    overflow: hidden;
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    color-scheme: light;
+
+    h1,
+    h2 {
+        font-family: inherit;
+    }
+
+    img {
+        max-width: 100%;
+    }
+}

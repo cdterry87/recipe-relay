@@ -22,6 +22,8 @@
             <ul>
                 <li><strong>Account details:</strong> your name, email address, password (stored only as a secure hash), and timezone. If you sign in with Google, we also receive your Google name, email address and profile picture.</li>
                 <li><strong>Your content:</strong> your profile, recipes and photos, the recipes you save, your ratings, and the creators you follow.</li>
+                <li><strong>Email settings:</strong> which optional emails you want and when your weekly digest arrives.</li>
+                <li><strong>A friend's email address</strong>, if you use "Email a friend". It is used to send that one email and is not stored. Your own address is not shown to them.</li>
                 <li><strong>Technical information:</strong> your IP address and browser details, used to limit repeated sign-in attempts, check for bots, and keep server logs.</li>
             </ul>
         </section>

@@ -1,6 +1,8 @@
 @php
     use App\Models\Recipe;
     $owner = $recipe->isOwnedBy(auth()->user());
+    // Owners see Share on private recipes too, with an explanation of how to share them.
+    $isShareable = $owner || $recipe->visibility->isShared();
     $hasImage = $recipe->image_path !== null;
     $sections = $recipe->ingredients->groupBy(fn ($row) => (string) $row->section);
     $facts = array_filter([
@@ -92,6 +94,9 @@
                 <span x-text="cooking ? 'Leave cook mode' : 'Cook mode'">Cook mode</span>
             </x-ui.button>
             <x-ui.button variant="ghost" size="sm" icon="printer" x-on:click="window.print()">Print</x-ui.button>
+            @if ($isShareable)
+                <x-recipe.share :recipe="$recipe" />
+            @endif
             <p class="recipe__wake muted" x-show="cooking" x-cloak role="status" x-text="awake ? 'Your screen will stay on while you cook.' : 'Bigger text is on. Your device may still dim the screen.'"></p>
         </div>
 

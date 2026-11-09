@@ -3,8 +3,10 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\DigestPreviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\UnsubscribeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -20,6 +22,12 @@ Route::livewire('/creators/{creator}', 'pages::creators.show')->name('creators.s
 // whereUuid keeps /recipes/new (an auth route below) from being read as a recipe.
 Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show')->whereUuid('recipe');
 Route::get('/r/{token}', [RecipeController::class, 'shared'])->name('recipes.shared')->where('token', '[A-Za-z0-9]{32}');
+
+// Signed links from emails, for members whether or not they are logged in.
+Route::middleware(['signed', 'throttle:20,1'])->group(function () {
+    Route::get('/unsubscribe/{user}/{type}', [UnsubscribeController::class, 'show'])->name('unsubscribe')->whereUuid('user');
+    Route::post('/unsubscribe/{user}/{type}', [UnsubscribeController::class, 'store'])->whereUuid('user');
+});
 
 Route::middleware('guest')->group(function () {
     Route::livewire('/login', 'pages::auth.login')->name('login');
@@ -45,10 +53,12 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::livewire('/my/cookbook', 'pages::my.cookbook')->name('my.cookbook');
     Route::livewire('/my/following', 'pages::my.following')->name('my.following');
     Route::livewire('/my/notifications', 'pages::my.notifications')->name('my.notifications');
+    Route::get('/my/digest', DigestPreviewController::class)->name('my.digest');
 
     Route::redirect('/settings', '/settings/profile');
     Route::livewire('/settings/profile', 'pages::settings.profile')->name('settings.profile');
     Route::livewire('/settings/account', 'pages::settings.account')->name('settings.account');
+    Route::livewire('/settings/notifications', 'pages::settings.notifications')->name('settings.notifications');
 });
 
 Route::get('/styleguide', function () {

@@ -27,6 +27,7 @@
 @import './components/logo.css' layer(components);
 @import './components/notice.css' layer(components);
 @import './components/recipe-card.css' layer(components);
+@import './components/share-sheet.css' layer(components);
 @import './components/theme-toggle.css' layer(components);
 @import './components/toast.css' layer(components);
 @import './components/user-menu.css' layer(components);
@@ -36,6 +37,7 @@
 @import './pages/error.css' layer(pages);
 @import './pages/home.css' layer(pages);
 @import './pages/legal.css' layer(pages);
+@import './pages/message.css' layer(pages);
 @import './pages/recipe.css' layer(pages);
 @import './pages/settings.css' layer(pages);
 @import './pages/social.css' layer(pages);

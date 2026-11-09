@@ -27,12 +27,18 @@ class SecurityHeaders
     {
         $response = $next($request);
 
+        // A response that sets one of these itself (such as the framed digest preview) keeps
+        // its own value. Symfony's replace: false would append a second value instead.
         foreach (self::HEADERS as $name => $value) {
-            $response->headers->set($name, $value, replace: false);
+            if (! $response->headers->has($name)) {
+                $response->headers->set($name, $value);
+            }
         }
 
         if ($request->isSecure()) {
-            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains', replace: false);
+            if (! $response->headers->has('Strict-Transport-Security')) {
+                $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+            }
         }
 
         $response->headers->remove('X-Powered-By');
