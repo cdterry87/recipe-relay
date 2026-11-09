@@ -33,3 +33,25 @@
         display: none;
     }
 }
+
+.site-header__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-height-sm);
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+
+    &:hover,
+    &[aria-current='page'] {
+        background: var(--color-surface-hover);
+    }
+
+    /* The narrowest phones reach Discover from the home search band and the footer. */
+    @media (max-width: 26rem) {
+        display: none;
+    }
+}

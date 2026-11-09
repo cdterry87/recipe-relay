@@ -2,13 +2,22 @@
     $signUpOpen = App\Support\Registration::open();
     $recipes = App\Support\Showcase::recipes();
     $meals = [
-        ['Breakfast', '🥞'], ['Lunch', '🥪'], ['Dinner', '🍝'],
-        ['Dessert', '🍰'], ['Quick & Easy', '⏱️'], ['Slow Cook', '🍲'],
+        ['Breakfast', '🥞', route('discover', ['meal' => 'breakfast'])],
+        ['Lunch', '🥪', route('discover', ['meal' => 'lunch'])],
+        ['Dinner', '🍝', route('discover', ['meal' => 'dinner'])],
+        ['Dessert', '🍰', route('discover', ['meal' => 'dessert'])],
+        ['Quick & Easy', '⏱️', route('collections.show', 'quick-and-easy')],
+        ['Slow Cook', '🍲', route('collections.show', 'slow-cook')],
     ];
 @endphp
 
 <x-layouts::app :description="'Keep your favorite recipes and relay the good ones to friends, family and followers.'">
     <div class="home-band">
+        <form class="home-search" action="{{ route('discover') }}" method="get" role="search">
+            <label class="visually-hidden" for="home-search">Search recipes</label>
+            <input class="home-search__input" id="home-search" type="search" name="q" maxlength="100" placeholder="Search recipes, ingredients or cooks, such as “tacos” or “pumpkin”">
+            <x-ui.button type="submit" class="home-search__button" icon="search">Search</x-ui.button>
+        </form>
         <p class="home-band__tagline">Home cooking, passed from <em>kitchen to kitchen</em></p>
     </div>
 
@@ -16,8 +25,8 @@
         <section class="feature" aria-labelledby="feature-title">
             <span class="feature__emoji" aria-hidden="true">🥄</span>
             <div class="cluster">
-                <x-ui.chip tone="brand">Coming soon</x-ui.chip>
-                <x-ui.chip>Fresh recipes</x-ui.chip>
+                <x-ui.chip tone="brand">Free to use</x-ui.chip>
+                <x-ui.chip>Private by default</x-ui.chip>
             </div>
             <h1 id="feature-title">Cook it. Love it. <em>Relay it.</em></h1>
             <p>Grandma's stew, the weeknight tacos, the cake everyone asks about. Save them here, guard the family secrets, and hand the rest to the people at your table.</p>
@@ -49,22 +58,45 @@
                 <p class="eyebrow">Fresh from the community</p>
                 <h2 id="recipes-title">Trending <em>recipes</em></h2>
             </header>
-            <a class="more-link" href="{{ route('discover') }}">View more <span aria-hidden="true">→</span><span class="visually-hidden"> trending recipes</span></a>
+            <a class="more-link" href="{{ route('discover', ['sort' => 'most-saved']) }}">View more <span aria-hidden="true">→</span><span class="visually-hidden"> trending recipes</span></a>
         </div>
         <div class="card-grid">
-            @foreach ($recipes as $recipe)
-                <x-recipe.card
-                    :title="$recipe['title']"
-                    :image="asset('images/samples/'.$recipe['image'].'.webp')"
-                    :tag="$recipe['tag']"
-                    :minutes="$recipe['minutes']"
-                    :calories="$recipe['calories']"
-                    :saves="$recipe['saves']"
-                    :by="$recipe['by']"
-                />
-            @endforeach
+            @if ($trending)
+                @foreach ($trending as $recipe)
+                    <x-recipe.tile :recipe="$recipe" />
+                @endforeach
+            @else
+                @foreach ($recipes as $recipe)
+                    <x-recipe.card
+                        :title="$recipe['title']"
+                        :image="asset('images/samples/'.$recipe['image'].'.webp')"
+                        :tag="$recipe['tag']"
+                        :minutes="$recipe['minutes']"
+                        :calories="$recipe['calories']"
+                        :saves="$recipe['saves']"
+                        :by="$recipe['by']"
+                    />
+                @endforeach
+            @endif
         </div>
     </section>
+
+    @if ($fresh->isNotEmpty())
+        <section class="section" aria-labelledby="fresh-title">
+            <div class="section__top">
+                <header class="section__header">
+                    <p class="eyebrow">Just out of the oven</p>
+                    <h2 id="fresh-title">New this <em>week</em></h2>
+                </header>
+                <a class="more-link" href="{{ route('discover') }}">View more <span aria-hidden="true">→</span><span class="visually-hidden"> new recipes</span></a>
+            </div>
+            <div class="card-grid">
+                @foreach ($fresh as $recipe)
+                    <x-recipe.tile :recipe="$recipe" />
+                @endforeach
+            </div>
+        </section>
+    @endif
 
     <section class="section" aria-labelledby="meals-title">
         <header class="section__header">
@@ -72,11 +104,13 @@
             <h2 id="meals-title">Find your next <em>meal</em></h2>
         </header>
         <ul class="tiles">
-            @foreach ($meals as [$name, $emoji])
-                <li class="tile">
-                    <span class="tile__art" aria-hidden="true">{{ $emoji }}</span>
-                    <span class="tile__name">{{ $name }}</span>
-                    <span class="tile__note">Coming soon</span>
+            @foreach ($meals as [$name, $emoji, $href])
+                <li>
+                    <a class="tile" href="{{ $href }}">
+                        <span class="tile__art" aria-hidden="true">{{ $emoji }}</span>
+                        <span class="tile__name">{{ $name }}</span>
+                        <span class="tile__note">Browse recipes →</span>
+                    </a>
                 </li>
             @endforeach
         </ul>

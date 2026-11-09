@@ -3,22 +3,18 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'pages.home')->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 Route::view('/privacy-policy', 'privacy-policy')->name('privacy-policy');
 
-// Placeholders until Discover (M3) and creator pages (M4) arrive.
-Route::view('/discover', 'pages.coming-soon', [
-    'title' => 'Discover recipes',
-    'eyebrow' => 'Coming soon',
-    'heading' => 'Discover <em>recipes</em>',
-    'emoji' => '🔎',
-    'message' => 'Search and filter public recipes by meal, collection, time and star rating. The kitchen is still warming up!',
-])->name('discover');
+Route::livewire('/discover', 'pages::discover')->name('discover');
+Route::livewire('/collections/{collection}', 'pages::collections.show')->name('collections.show')->where('collection', '[a-z-]+');
 
+// Placeholder until creator pages arrive in M4.
 Route::view('/creators', 'pages.coming-soon', [
     'title' => 'Trending creators',
     'eyebrow' => 'Coming soon',

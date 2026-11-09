@@ -56,10 +56,10 @@
                 @if ($recipe->collections?->isNotEmpty() || $recipe->dietary_tags?->isNotEmpty())
                     <ul class="cluster recipe__tags" aria-label="Collections and dietary tags">
                         @foreach ($recipe->collections ?? [] as $collection)
-                            <li><a class="chip chip--subtle" href="{{ route('discover', ['collection' => $collection->slug()]) }}">{{ $collection->label() }}</a></li>
+                            <li><a class="chip chip--subtle" href="{{ route('collections.show', $collection->slug()) }}">{{ $collection->label() }}</a></li>
                         @endforeach
                         @foreach ($recipe->dietary_tags ?? [] as $tag)
-                            <li><a class="chip chip--secondary" href="{{ route('discover', ['diet' => Str::slug($tag->value)]) }}">{{ $tag->label() }}</a></li>
+                            <li><a class="chip chip--secondary" href="{{ route('discover', ['diet' => [$tag->slug()]]) }}">{{ $tag->label() }}</a></li>
                         @endforeach
                     </ul>
                 @endif

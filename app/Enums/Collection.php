@@ -19,12 +19,30 @@ enum Collection: string
     case BudgetFriendly = 'Budget-Friendly';
     case CrowdPleaser = 'Crowd-Pleaser';
 
-    /**
-     * The URL-friendly name, such as "quick-and-easy".
-     */
-    public function slug(): string
+    public function description(): string
     {
-        return str($this->value)->replace('&', 'and')->slug()->value();
+        return match ($this) {
+            self::QuickAndEasy => 'Easy recipes on the table in 30 minutes or less.',
+            self::SlowCook => 'Low and slow: set it going and come back to something wonderful.',
+            self::OnePot => 'One pot or pan, and far fewer dishes.',
+            self::KidFriendly => 'Food that small people actually eat.',
+            self::MakeAhead => 'Cook today, enjoy tomorrow. Great for busy weeks.',
+            self::BudgetFriendly => 'Big flavour from everyday ingredients.',
+            self::CrowdPleaser => 'For parties, potlucks and feeding a houseful.',
+        };
+    }
+
+    public function emoji(): string
+    {
+        return match ($this) {
+            self::QuickAndEasy => '⏱️',
+            self::SlowCook => '🍲',
+            self::OnePot => '🥘',
+            self::KidFriendly => '🧒',
+            self::MakeAhead => '📦',
+            self::BudgetFriendly => '🪙',
+            self::CrowdPleaser => '🎉',
+        };
     }
 
     /**

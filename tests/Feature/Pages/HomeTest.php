@@ -1,13 +1,35 @@
 <?php
 
+use App\Models\Recipe;
 use App\Models\User;
 use App\Support\Showcase;
+
+it('shows real trending recipes once there are enough', function () {
+    Recipe::factory()->public()->count(3)->create();
+
+    $this->get(route('home'))->assertSee(Showcase::recipes()[0]['title']);
+
+    Recipe::factory()->public()->create(['title' => 'Real Recipe Four', 'saves_count' => 99]);
+
+    $this->get(route('home'))
+        ->assertSee('Real Recipe Four')
+        ->assertDontSee(Showcase::recipes()[0]['title'])
+        ->assertSee('New this <em>week</em>', false);
+});
+
+it('has a search box and meal tiles that lead to Discover', function () {
+    $this->get(route('home'))
+        ->assertSee('action="'.route('discover').'"', false)
+        ->assertSee('name="q"', false)
+        ->assertSee(route('discover', ['meal' => 'breakfast']))
+        ->assertSee(route('collections.show', 'slow-cook'));
+});
 
 it('shows trending recipes with photos and a link to discover more', function () {
     $response = $this->get(route('home'))->assertOk();
 
     $response->assertSee('Trending <em>recipes</em>', false)
-        ->assertSee('href="'.route('discover').'"', false)
+        ->assertSee(e(route('discover', ['sort' => 'most-saved'])), false)
         ->assertSee('View more');
 
     foreach (Showcase::recipes() as $recipe) {
@@ -44,15 +66,12 @@ it('formats durations the way cards show them', function (int $minutes, string $
     [75, '1h 15m'],
 ]);
 
-it('shows placeholder pages for discover and creators', function (string $route, string $heading) {
-    $this->get(route($route))
+it('shows a placeholder page for creators', function () {
+    $this->get(route('creators'))
         ->assertOk()
-        ->assertSee($heading, false)
+        ->assertSee('Trending <em>creators</em>', false)
         ->assertSee('Coming soon');
-})->with([
-    ['discover', 'Discover <em>recipes</em>'],
-    ['creators', 'Trending <em>creators</em>'],
-]);
+});
 
 it('shows account links in the footer for guests and members', function () {
     $this->get(route('home'))

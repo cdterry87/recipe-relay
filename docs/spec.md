@@ -213,7 +213,7 @@ Fields:
 
 ### B3.3 Discover, search & filter
 - The **Discover** page lists **public recipes only**, as a card grid with "Load more" and URL-synced filters (`#[Url]`), so filtered views are shareable.
-- **Search:** keyword across title, summary, ingredient names and creator name, using MySQL `FULLTEXT`.
+- **Search:** each word (up to six) must appear in the title, summary, an ingredient name or the creator's name (`LIKE` matching, with wildcards escaped). MySQL `FULLTEXT` was dropped from the plan because InnoDB does not index rows inside an open transaction, so it can't be tested reliably; Laravel Scout is the upgrade path if the catalogue grows.
 - **Filters** (combinable, shown as friendly chips):
   - **Meal type** (one per recipe): Breakfast, Brunch, Lunch, Dinner, Snack, Appetizer, Side, Soup, Salad, Dessert, Drink.
   - **Collections** (any number per recipe): a fixed list — Quick & Easy, Slow Cook, One-Pot, Kid-Friendly, Make-Ahead, Budget-Friendly, Crowd-Pleaser. The creator ticks checkboxes in the editor. Some boxes are pre-ticked by a rule the first time the recipe's details make it fit, and the creator can untick them:
@@ -224,7 +224,7 @@ Fields:
   - **Total time:** ≤ 15, ≤ 30, ≤ 60, or 60+ minutes.
   - **Star rating:** 4★ & up, 3★ & up, 2★ & up (cached average; unrated recipes are excluded when this filter is set).
 - **Sort:** Newest, Top rated, Most saved, Quickest, A–Z. Allow-listed through an enum.
-- The same filter component is reused on **My Recipes**, **Cookbook** and **Creator profile**, each with its own base query.
+- One query class (`App\Support\RecipeFilters`) and one Livewire base class (`App\Livewire\RecipeListing`) power **Discover**, **collection pages** and **My Recipes**, and will power **Cookbook** and **Creator profile**. Each page supplies its base query and its allowed sorts. Filter state lives in the URL with readable values (`?q=soup&meal=dinner&collection[]=one-pot&sort=quickest`); unknown values are ignored. Lists show 24 recipes with "Show more".
 - **Collection pages:** `/collections/{collection}` shows public recipes in one collection, for example `/collections/quick-and-easy`.
 - **"Surprise me"** button opens a random recipe from the current results.
 
@@ -339,7 +339,7 @@ recipes
   calories, notes, video_url, rating_avg (decimal 3,2), rating_count, saves_count,
   published_at, seed_key (nullable, unique — links a row to the demo seed data),
   timestamps
-  INDEX (visibility, published_at), FULLTEXT (title, summary)
+  INDEX (visibility, published_at)
 
 ingredients          id, uuid, recipe_id, position, section, quantity (string), unit, name, note
 steps                id, uuid, recipe_id, position, body
