@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\Avatars;
+use App\Support\SeedPhotos;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -19,6 +20,9 @@ new #[Layout('layouts::app', ['width' => 'reading']), Title('Profile settings')]
 
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
     public $photo = null;
+
+    /** For the demo account, which picks a seed photo instead of uploading. */
+    public string $seedPhoto = '';
 
     public function mount(): void
     {
@@ -51,8 +55,25 @@ new #[Layout('layouts::app', ['width' => 'reading']), Title('Profile settings')]
     /**
      * Stores the photo as soon as one is picked.
      */
+    public function updatedSeedPhoto(): void
+    {
+        abort_unless(auth()->user()->is_demo, 403);
+
+        if (! SeedPhotos::exists($this->seedPhoto)) {
+            $this->addError('seedPhoto', 'Pick one of the photos shown.');
+
+            return;
+        }
+
+        Avatars::useSeedPhoto(auth()->user(), $this->seedPhoto);
+
+        $this->dispatch('toast', type: 'success', message: 'Looking good! Your photo has been updated.');
+    }
+
     public function updatedPhoto(): void
     {
+        abort_if(auth()->user()->is_demo, 403);
+
         $key = 'avatar|'.auth()->id();
 
         if (RateLimiter::tooManyAttempts($key, 10)) {
@@ -103,18 +124,30 @@ new #[Layout('layouts::app', ['width' => 'reading']), Title('Profile settings')]
     <x-ui.card title="Photo">
         <div class="avatar-editor">
             <x-ui.avatar :user="auth()->user()" size="lg" />
-            <div class="stack stack--sm">
-                <label class="field__label" for="photo">Choose a new photo</label>
-                <input class="avatar-editor__file" id="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" wire:model="photo" aria-describedby="photo-hint{{ $errors->has('photo') ? ' photo-error' : '' }}">
-                <p class="field__hint" id="photo-hint">JPG, PNG, WebP or GIF, up to 5 MB. We crop it to a square.</p>
-                <p class="field__hint" wire:loading wire:target="photo">Uploading…</p>
-                @error('photo')<p class="field__error" id="photo-error" role="alert">{{ $message }}</p>@enderror
-                @if (auth()->user()->avatar_path)
-                    <div>
-                        <x-ui.button variant="ghost" size="sm" icon="trash" wire:click="removePhoto">Remove photo</x-ui.button>
-                    </div>
-                @endif
-            </div>
+            @if (auth()->user()->is_demo)
+                <div class="stack stack--sm">
+                    <x-demo.photo-picker name="seedPhoto" :selected="str_replace('seed/', '', (string) auth()->user()->avatar_path)" label="Choose a new photo" wire:model.live="seedPhoto" />
+                    @error('seedPhoto')<p class="field__error" role="alert">{{ $message }}</p>@enderror
+                    @if (auth()->user()->avatar_path)
+                        <div>
+                            <x-ui.button variant="ghost" size="sm" icon="trash" wire:click="removePhoto">Remove photo</x-ui.button>
+                        </div>
+                    @endif
+                </div>
+            @else
+                <div class="stack stack--sm">
+                    <label class="field__label" for="photo">Choose a new photo</label>
+                    <input class="avatar-editor__file" id="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" wire:model="photo" aria-describedby="photo-hint{{ $errors->has('photo') ? ' photo-error' : '' }}">
+                    <p class="field__hint" id="photo-hint">JPG, PNG, WebP or GIF, up to 5 MB. We crop it to a square.</p>
+                    <p class="field__hint" wire:loading wire:target="photo">Uploading…</p>
+                    @error('photo')<p class="field__error" id="photo-error" role="alert">{{ $message }}</p>@enderror
+                    @if (auth()->user()->avatar_path)
+                        <div>
+                            <x-ui.button variant="ghost" size="sm" icon="trash" wire:click="removePhoto">Remove photo</x-ui.button>
+                        </div>
+                    @endif
+                </div>
+            @endif
         </div>
     </x-ui.card>
 

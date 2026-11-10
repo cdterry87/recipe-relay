@@ -57,7 +57,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     Route::redirect('/settings', '/settings/profile');
     Route::livewire('/settings/profile', 'pages::settings.profile')->name('settings.profile');
-    Route::livewire('/settings/account', 'pages::settings.account')->name('settings.account');
+    Route::livewire('/settings/account', 'pages::settings.account')->middleware('not-demo')->name('settings.account');
     Route::livewire('/settings/notifications', 'pages::settings.notifications')->name('settings.notifications');
 });
 

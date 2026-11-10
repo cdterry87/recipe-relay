@@ -36,9 +36,9 @@ it('shows trending recipes with photos and a link to discover more', function ()
 
     foreach (Showcase::recipes() as $recipe) {
         $response->assertSee($recipe['title'])
-            ->assertSee(asset('images/samples/'.$recipe['image'].'.webp'));
+            ->assertSee(asset('images/seed/'.$recipe['image'].'-800.webp'));
 
-        expect(public_path('images/samples/'.$recipe['image'].'.webp'))->toBeFile();
+        expect(public_path('images/seed/'.$recipe['image'].'-800.webp'))->toBeFile();
     }
 });
 

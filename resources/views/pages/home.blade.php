@@ -101,7 +101,7 @@
                 @foreach ($recipes as $recipe)
                     <x-recipe.card
                         :title="$recipe['title']"
-                        :image="asset('images/samples/'.$recipe['image'].'.webp')"
+                        :image="App\Support\SeedPhotos::url('seed/'.$recipe['image'], 800)"
                         :tag="$recipe['tag']"
                         :minutes="$recipe['minutes']"
                         :calories="$recipe['calories']"
@@ -237,7 +237,7 @@
         </div>
         <div class="features__art" aria-hidden="true">
             <span class="features__badge">Saved to your cookbook</span>
-            <x-recipe.card :title="$recipes[1]['title']" :image="asset('images/samples/'.$recipes[1]['image'].'.webp')" :tag="$recipes[1]['tag']"
+            <x-recipe.card :title="$recipes[1]['title']" :image="App\Support\SeedPhotos::url('seed/'.$recipes[1]['image'], 800)" :tag="$recipes[1]['tag']"
                 :minutes="$recipes[1]['minutes']" :calories="$recipes[1]['calories']" :saves="$recipes[1]['saves']" :by="$recipes[1]['by']" />
         </div>
     </section>

@@ -62,3 +62,26 @@
     gap: var(--space-1);
     min-height: var(--turnstile-height);
 }
+
+/* The one-click demo login on the login page, in demo mode. */
+.demo-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+}
+
+.demo-panel__title {
+    font-size: var(--text-lg);
+}
+
+.demo-panel__note {
+    font-size: var(--text-sm);
+}
+
+.demo-panel__check:empty {
+    display: none;
+}

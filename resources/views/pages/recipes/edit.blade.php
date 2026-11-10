@@ -12,6 +12,7 @@ use App\Enums\Visibility;
 use App\Livewire\Forms\RecipeForm;
 use App\Models\Recipe;
 use App\Support\RecipeImages;
+use App\Support\SeedPhotos;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -40,6 +41,9 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
     public $photo = null;
 
     public bool $removePhoto = false;
+
+    /** For the demo account, which picks a seed photo instead of uploading. */
+    public string $seedPhoto = '';
 
     public function mount(?Recipe $recipe = null): void
     {
@@ -136,7 +140,14 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
             }
         }
 
-        $visibility = Visibility::from($this->form->visibility);
+        $demo = auth()->user()->is_demo;
+
+        if ($demo && ($this->photo !== null || ($this->seedPhoto !== '' && ! SeedPhotos::exists($this->seedPhoto)))) {
+            throw ValidationException::withMessages(['seedPhoto' => 'Pick one of the photos shown.']);
+        }
+
+        // The demo account's recipes are always private (SaveRecipe enforces it too).
+        $visibility = $demo ? Visibility::Private : Visibility::from($this->form->visibility);
 
         if ($visibility->isShared()) {
             if (! auth()->user()->hasVerifiedEmail()) {
@@ -159,13 +170,14 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
             $visibility,
             $this->photo,
             $this->removePhoto,
+            $demo && $this->seedPhoto !== '' ? $this->seedPhoto : null,
         );
 
         $this->recipeUuid = $saved->uuid;
         unset($this->recipe);
 
         $this->photo?->delete();
-        $this->reset('photo', 'removePhoto');
+        $this->reset('photo', 'removePhoto', 'seedPhoto');
 
         if ($isNew) {
             session()->flash('toast', ['type' => 'success', 'message' => 'Your recipe is saved. Keep going, or view it any time.']);
@@ -238,23 +250,32 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
 
         <x-ui.card title="Photo">
             <div class="photo-editor">
-                @if ($photo && ! $errors->has('photo') && $photo->isPreviewable())
+                @if ($seedPhoto !== '' && App\Support\SeedPhotos::exists($seedPhoto))
+                    <img class="photo-editor__preview" src="{{ App\Support\SeedPhotos::url(App\Support\SeedPhotos::path($seedPhoto), 800) }}" alt="Preview of the chosen photo">
+                @elseif ($photo && ! $errors->has('photo') && $photo->isPreviewable())
                     <img class="photo-editor__preview" src="{{ $photo->temporaryUrl() }}" alt="Preview of the new photo">
                 @elseif ($recipe?->image_path && ! $removePhoto)
                     <img class="photo-editor__preview" src="{{ $recipe->imageUrl(800) }}" alt="Current photo">
                 @else
                     <div class="photo-editor__empty" aria-hidden="true">📷</div>
                 @endif
-                <div class="stack stack--sm">
-                    <label class="field__label" for="photo">{{ $recipe?->image_path ? 'Replace the photo' : 'Add a photo' }}</label>
-                    <input id="photo" type="file" accept="image/jpeg,image/png,image/webp" wire:model="photo" aria-describedby="photo-hint{{ $errors->has('photo') ? ' photo-error' : '' }}">
-                    <p class="field__hint" id="photo-hint">JPG, PNG or WebP, up to 8 MB. Landscape photos look best.</p>
-                    <p class="field__hint" wire:loading wire:target="photo">Uploading…</p>
-                    @error('photo')<p class="field__error" id="photo-error" role="alert">{{ $message }}</p>@enderror
-                    @if ($recipe?->image_path)
-                        <x-ui.checkbox name="removePhoto" label="Remove the current photo" wire:model.live="removePhoto" />
-                    @endif
-                </div>
+                @if (auth()->user()->is_demo)
+                    <div class="stack stack--sm">
+                        <x-demo.photo-picker name="seedPhoto" :selected="$seedPhoto !== '' ? $seedPhoto : str_replace('seed/', '', (string) $recipe?->image_path)" label="Pick a photo" wire:model.live="seedPhoto" />
+                        @error('seedPhoto')<p class="field__error" role="alert">{{ $message }}</p>@enderror
+                    </div>
+                @else
+                    <div class="stack stack--sm">
+                        <label class="field__label" for="photo">{{ $recipe?->image_path ? 'Replace the photo' : 'Add a photo' }}</label>
+                        <input id="photo" type="file" accept="image/jpeg,image/png,image/webp" wire:model="photo" aria-describedby="photo-hint{{ $errors->has('photo') ? ' photo-error' : '' }}">
+                        <p class="field__hint" id="photo-hint">JPG, PNG or WebP, up to 8 MB. Landscape photos look best.</p>
+                        <p class="field__hint" wire:loading wire:target="photo">Uploading…</p>
+                        @error('photo')<p class="field__error" id="photo-error" role="alert">{{ $message }}</p>@enderror
+                        @if ($recipe?->image_path)
+                            <x-ui.checkbox name="removePhoto" label="Remove the current photo" wire:model.live="removePhoto" />
+                        @endif
+                    </div>
+                @endif
             </div>
         </x-ui.card>
 
@@ -328,25 +349,29 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
         </x-ui.card>
 
         <x-ui.card title="Who can see it?">
+            @if (auth()->user()->is_demo)
+                <p class="notice notice--info">Demo recipes stay private, so nothing you write here is shown to other visitors. Everything resets at midnight.</p>
+            @else
             <fieldset class="visibility" aria-describedby="visibility-help">
-                <legend class="visually-hidden">Visibility</legend>
-                @foreach (Visibility::cases() as $option)
-                    <label class="visibility__option">
-                        <input type="radio" name="visibility" value="{{ $option->value }}" wire:model="form.visibility">
-                        <span>
-                            <strong>{{ $option->label() }}</strong>
-                            <span class="muted">{{ $option->description() }}</span>
-                        </span>
-                    </label>
-                @endforeach
-            </fieldset>
-            <p class="field__hint" id="visibility-help">
-                @if (! auth()->user()->hasVerifiedEmail())
-                    Confirm your email address to share recipes. Until then they stay private.
-                @else
-                    Recipes need at least one ingredient and one step before you can share them.
-                @endif
-            </p>
+                    <legend class="visually-hidden">Visibility</legend>
+                    @foreach (Visibility::cases() as $option)
+                        <label class="visibility__option">
+                            <input type="radio" name="visibility" value="{{ $option->value }}" wire:model="form.visibility">
+                            <span>
+                                <strong>{{ $option->label() }}</strong>
+                                <span class="muted">{{ $option->description() }}</span>
+                            </span>
+                        </label>
+                    @endforeach
+                </fieldset>
+                <p class="field__hint" id="visibility-help">
+                    @if (! auth()->user()->hasVerifiedEmail())
+                        Confirm your email address to share recipes. Until then they stay private.
+                    @else
+                        Recipes need at least one ingredient and one step before you can share them.
+                    @endif
+                </p>
+            @endif
             @error('form.visibility')<p class="field__error" role="alert">{{ $message }}</p>@enderror
 
             @if ($recipe?->visibility === Visibility::Unlisted)

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\EnsureNotDemo;
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Http\Middleware\TrustProxies;
@@ -35,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Signs out every other session when the password changes. Livewire re-runs it on
         // component updates, so a stolen session can't keep working either.
-        Livewire::addPersistentMiddleware([AuthenticateSession::class]);
+        Livewire::addPersistentMiddleware([AuthenticateSession::class, EnsureNotDemo::class]);
 
         // Verification links name the account by its UUID, never its id.
         VerifyEmail::createUrlUsing(fn (User $user) => URL::temporarySignedRoute(

@@ -7,6 +7,7 @@ use App\Enums\Visibility;
 use App\Models\Recipe;
 use App\Models\User;
 use App\Support\RecipeImages;
+use App\Support\SeedPhotos;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
@@ -30,13 +31,22 @@ final class SaveRecipe
         Visibility $visibility,
         ?UploadedFile $photo = null,
         bool $removePhoto = false,
+        ?string $seedPhoto = null,
     ): Recipe {
+        // The demo account can't upload, and nothing it writes is shown to anyone else.
+        if ($user->is_demo) {
+            $photo = null;
+            $visibility = Visibility::Private;
+        }
+
+        $seedPhoto = $seedPhoto !== null && SeedPhotos::exists($seedPhoto) ? SeedPhotos::path($seedPhoto) : null;
+
         // Image work happens before the transaction, so a slow resize never holds locks.
         $newImage = $photo ? RecipeImages::store($photo) : null;
         $recipe ??= new Recipe;
         $oldImage = $recipe->image_path;
 
-        DB::transaction(function () use ($user, $recipe, $details, $ingredients, $steps, $visibility, $newImage, $removePhoto) {
+        DB::transaction(function () use ($user, $recipe, $details, $ingredients, $steps, $visibility, $newImage, $removePhoto, $seedPhoto) {
             $complete = $ingredients !== [] && $steps !== [];
 
             $recipe->fill($details);
@@ -53,6 +63,8 @@ final class SaveRecipe
 
             if ($newImage !== null) {
                 $recipe->image_path = $newImage;
+            } elseif ($seedPhoto !== null) {
+                $recipe->image_path = $seedPhoto;
             } elseif ($removePhoto) {
                 $recipe->image_path = null;
             }

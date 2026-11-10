@@ -20,7 +20,7 @@
                 @auth
                     <li><a href="{{ route('my.recipes') }}">My recipes</a></li>
                     <li><a href="{{ route('settings.profile') }}">Profile settings</a></li>
-                    <li><a href="{{ route('settings.account') }}">Account settings</a></li>
+                    <li><a href="{{ route('my.cookbook') }}">My cookbook</a></li>
                 @else
                     <li><a href="{{ route('login') }}">Log in</a></li>
                     @if (App\Support\Registration::open())

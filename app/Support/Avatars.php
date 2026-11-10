@@ -35,6 +35,18 @@ final class Avatars
         self::delete($old);
     }
 
+    /**
+     * Uses one of the seed food photos as the avatar. This is how the demo account changes
+     * its picture, since it can't upload files.
+     */
+    public static function useSeedPhoto(User $user, string $key): void
+    {
+        $old = $user->avatar_path;
+        $user->forceFill(['avatar_path' => SeedPhotos::path($key)])->save();
+
+        self::delete($old);
+    }
+
     public static function remove(User $user): void
     {
         $old = $user->avatar_path;
@@ -45,7 +57,7 @@ final class Avatars
 
     public static function delete(?string $path): void
     {
-        if ($path !== null) {
+        if ($path !== null && ! SeedPhotos::isSeed($path)) {
             Storage::disk('public')->delete($path);
         }
     }
