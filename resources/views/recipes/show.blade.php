@@ -74,7 +74,7 @@
             </div>
             <figure class="recipe__photo">
                 @if ($hasImage)
-                    <img src="{{ $recipe->imageUrl(800) }}" srcset="{{ $recipe->imageSrcset() }}" sizes="(min-width: 60rem) 36rem, 100vw" alt="{{ $recipe->title }}" width="1600" height="1200">
+                    <img src="{{ $recipe->imageUrl(800) }}" srcset="{{ $recipe->imageSrcset() }}" sizes="(min-width: 60rem) 36rem, 100vw" alt="{{ $recipe->title }}" width="1600" height="1200" fetchpriority="high">
                 @else
                     <div class="recipe__photo-empty" aria-hidden="true">🍽️</div>
                 @endif

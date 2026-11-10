@@ -12,7 +12,7 @@
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;">
     <tr>
         <td width="96" valign="top" style="padding:0 16px 0 0;">
-            <a href="{{ $url }}" style="display:block; width:96px; height:72px; border-radius:10px; background:#f1e8d8; overflow:hidden; text-align:center; line-height:72px; font-size:28px; text-decoration:none;">
+            <a href="{{ $url }}" aria-label="{{ $recipe->title }}" style="display:block; width:96px; height:72px; border-radius:10px; background:#f1e8d8; overflow:hidden; text-align:center; line-height:72px; font-size:28px; text-decoration:none;">
                 @if ($image = $recipe->imageUrl(400))
                     <img src="{{ $image }}" width="96" height="72" alt="" style="display:block; width:96px; height:72px; object-fit:cover; border:0;">
                 @else

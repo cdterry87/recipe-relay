@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Middleware\EnsureNotDemo;
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Support\Facades\URL;
@@ -27,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Outside production, lazy loading (an N+1 query waiting to happen) and filling
+        // attributes that aren't fillable both throw, so tests catch them.
+        Model::preventLazyLoading(! $this->app->isProduction());
+        Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
+
         // One password rule for registration, resets, settings and `user:create`.
         Password::defaults(fn () => Password::min(8)->max(255));
 
