@@ -87,6 +87,22 @@ const readTheme = () => {
     }
 };
 
+const applyTheme = (value) => {
+    if (value === 'light' || value === 'dark') {
+        document.documentElement.dataset.theme = value;
+    } else {
+        delete document.documentElement.dataset.theme;
+    }
+};
+
+// wire:navigate swaps in the next page's <html> attributes, which have no data-theme (the
+// server never knows the choice). Reapply it as the page swaps, before it paints, and once
+// more after navigation in case the swap hook isn't available.
+document.addEventListener('livewire:navigating', (event) => {
+    event.detail?.onSwap?.(() => applyTheme(readTheme()));
+});
+document.addEventListener('livewire:navigated', () => applyTheme(readTheme()));
+
 document.addEventListener('alpine:init', () => {
     // Light, dark, or follow the system. The head script applies a saved choice before first paint.
     Alpine.store('theme', {
@@ -101,11 +117,7 @@ document.addEventListener('alpine:init', () => {
                 // Private browsing can block storage; the theme still applies for this page.
             }
 
-            if (value === 'system') {
-                delete document.documentElement.dataset.theme;
-            } else {
-                document.documentElement.dataset.theme = value;
-            }
+            applyTheme(value);
         },
     });
 
