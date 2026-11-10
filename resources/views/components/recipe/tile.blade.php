@@ -4,6 +4,7 @@
 <x-recipe.card
     :title="$recipe->title"
     :image="$recipe->imageUrl(800)"
+    :srcset="$recipe->image_path ? $recipe->imageUrl(400).' 400w, '.$recipe->imageUrl(800).' 800w' : null"
     :tag="$recipe->meal_type?->label()"
     :minutes="$recipe->totalMinutes()"
     :calories="$recipe->calories"

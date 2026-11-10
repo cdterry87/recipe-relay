@@ -1,6 +1,6 @@
 # Recipe Relay — Product & Technical Specification
 
-> Status: **Draft v0.2** — 2026-11-09 (open questions answered; demo mode added)
+> Status: **v1.0** — 2026-11-09. Milestones M0–M7 are built; this document describes the shipped application.
 > Supersedes: *Recipeek* (archived on branch `archive-2025`)
 
 ---
@@ -336,14 +336,14 @@ Every layout ends with the dark footer described in §B8. Its fine-print row alw
 
 Everything is enforced with **Policies** (`RecipePolicy`, `RatingPolicy`, `UserPolicy`) and query scopes (`Recipe::listed()`, `Recipe::visibleTo($user)`), never with inline checks.
 
-## B5. Data model (proposed)
+## B5. Data model
 
 ```
 users
   id, uuid (unique), name, email (unique), email_verified_at,
   password (nullable: Google-only and sample accounts), avatar_path, bio, timezone,
   google_id (nullable, unique), digest_day (0–6, default 0), digest_hour (0–23, default 9),
-  email_preferences (json), is_demo (bool), is_sample (bool),
+  last_digest_at, email_preferences (json), is_demo (bool), is_sample (bool),
   remember_token, timestamps
   -- is_demo and is_sample are never mass assignable
 
@@ -354,7 +354,8 @@ recipes
   servings, difficulty, meal_type, cuisine, method, occasion (all enums, nullable),
   collections (json list), dietary_tags (json list),
   calories, notes, video_url, rating_avg (decimal 3,2), rating_count, saves_count,
-  published_at, seed_key (nullable, unique — links a row to the demo seed data),
+  published_at, announced_at (first time it went public; followers are told once),
+  seed_key (nullable, unique — links a row to the demo seed data),
   timestamps
   INDEX (visibility, published_at)
 
@@ -380,7 +381,7 @@ Enums (PHP backed, with `label()` and `options()` helpers): `Visibility`, `Recip
 
 Conventions: casts on models; `$fillable` (never `$guarded = []`); factories for every model; foreign keys with `cascadeOnDelete`; multi-row writes in transactions.
 
-## B6. Routes (proposed)
+## B6. Routes
 
 ```
 GET  /                              home
@@ -404,7 +405,7 @@ GET  /settings/profile|account|notifications
 /login  /forgot-password  /reset-password/{token}  /verify-email
 /register                           (404 in demo mode)
 /auth/google/redirect  /auth/google/callback
-GET  /unsubscribe/{user:uuid}       signed
+GET|POST /unsubscribe/{user:uuid}/{type}   unsubscribe (signed; GET confirms, POST unsubscribes)
 ```
 
 ## B7. Architecture & best practices
@@ -451,7 +452,7 @@ The page structure and type pairing take cues from Pepper (peppertheapp.com), a 
   - **Dark green** `#2f5d3a` (dark mode `#8cc49a`) for buttons, links and focus rings, with white text (7.6:1)
   - **Deep green** feature panels: a gradient from `#1f3d29` to `#36603f`, cream text, light kraft accent words `#e8d6b5`
   - **Kraft-paper panels** `#f1e8d8` / `#2c281f` with a thin border for call-to-action and features panels, with dark text (light text in dark mode). Buttons on them are deep green. No orange is used anywhere.
-  - Accent words in headings use a warm brown `#9a5b1f` / `#f0b47a`
+  - Accent words in headings use a warm brown `#8f531a` / `#f0b47a`
   - A deep green footer `#17261b` in both themes
 - **Type** (self-hosted through npm, no font CDN):
   - Headings: League Spartan, weight 800, uppercase, tight leading
@@ -625,7 +626,21 @@ There is no support email address.
 | M4 | Social | Cookbook (saves), ratings tied to saves, follows, following feed, in-app notifications |
 | M5 | Relay | Share sheet, email a friend, OG and JSON-LD, weekly digest, preferences, unsubscribe, digest preview |
 | M6 | Demo | Seed data, sample creators, `demo:reset` and schedule, demo login, demo restrictions, photo gallery |
-| M7 | Polish | Cook mode, servings scaler, print CSS, error pages, accessibility audit, deployment |
+| M7 | Polish | Cook mode, servings scaler, print CSS and error pages (built earlier, in M2 and M0); accessibility audit, query budgets and lazy-loading guard, responsive card images, Forge deployment guide, README |
+
+All milestones are complete.
+
+### B15.1 M7 audit notes
+- **Accessibility**: each main page was checked in light and dark themes for image alt text, accessible names on links and buttons, form labels, duplicate ids, broken ARIA references, heading order, landmarks and text contrast.
+  - Fixed: the warm-brown accent was darkened to `#8f531a`, so it passes 4.5:1 on the kraft panels.
+  - Fixed: listing pages gained a visually hidden `h2`, so card titles (`h3`) no longer skip a heading level.
+  - Fixed: image-only links in emails now have names.
+- **Performance**:
+  - `Model::preventLazyLoading()` is on outside production, so the test suite fails on any N+1 query.
+  - `QueryBudgetTest` keeps every main page at 20 queries or fewer, with the full demo world loaded. They currently use 2–15.
+  - Recipe cards serve a 400/800 `srcset`, and the recipe hero image is `fetchpriority="high"`.
+- **Security**: the session cookie is now `Secure` whenever `APP_URL` is https (it previously needed `SESSION_SECURE_COOKIE` set explicitly).
+- **Deployment**: see [deployment.md](deployment.md).
 
 ## B16. Non-goals for v1
 - Friends, friend requests and private profiles (dropped from Recipeek).

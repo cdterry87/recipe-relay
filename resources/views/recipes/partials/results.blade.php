@@ -9,6 +9,8 @@
         @endif
     </section>
 @else
+    {{-- Card titles are h3s, so the list gets its own (hidden) h2 under the page's h1. --}}
+    <h2 class="visually-hidden">{{ $resultsHeading ?? 'Recipes' }}</h2>
     <div class="card-grid">
         @foreach ($this->results as $recipe)
             <x-recipe.tile :recipe="$recipe" wire:key="recipe-{{ $recipe->uuid }}">

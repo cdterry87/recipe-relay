@@ -20,7 +20,7 @@
     @endif
 
     @if ($digest->trending->isNotEmpty())
-        <h2 style="margin:32px 0 12px; padding-top:24px; border-top:1px solid #e6dccb; font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:#9a5b1f;">Trending this week</h2>
+        <h2 style="margin:32px 0 12px; padding-top:24px; border-top:1px solid #e6dccb; font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:#8f531a;">Trending this week</h2>
         @foreach ($digest->trending as $recipe)
             <x-mail.recipe :recipe="$recipe" />
         @endforeach

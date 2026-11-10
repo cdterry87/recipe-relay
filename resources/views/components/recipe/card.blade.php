@@ -1,10 +1,10 @@
-@props(['title', 'image' => null, 'tag' => null, 'minutes' => null, 'calories' => null, 'saves' => null, 'rating' => null, 'by' => null, 'href' => null])
+@props(['title', 'image' => null, 'srcset' => null, 'tag' => null, 'minutes' => null, 'calories' => null, 'saves' => null, 'rating' => null, 'by' => null, 'href' => null])
 
 {{-- A recipe card: photo with a tag, title, a compact facts line, and the cook. --}}
 <article {{ $attributes->class('recipe-card') }}>
     <div class="recipe-card__media">
         @if ($image)
-            <img class="recipe-card__image" src="{{ $image }}" alt="" width="800" height="600" loading="lazy" decoding="async">
+            <img class="recipe-card__image" src="{{ $image }}" @if ($srcset) srcset="{{ $srcset }}" sizes="(min-width: 75rem) 18rem, (min-width: 48rem) 30vw, (min-width: 30rem) 45vw, 90vw" @endif alt="" width="800" height="600" loading="lazy" decoding="async">
         @else
             <span class="recipe-card__placeholder" aria-hidden="true">🍽️</span>
         @endif

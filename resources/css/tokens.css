@@ -25,7 +25,7 @@
     --color-on-primary: light-dark(#ffffff, #10200f);
     --color-primary-text: light-dark(#2f5d3a, #a6d4b1);
     --color-primary-subtle: light-dark(#e4eedf, #24352a);
-    --color-accent-word: light-dark(#9a5b1f, #f0b47a);
+    --color-accent-word: light-dark(#8f531a, #f0b47a);
 
     --color-secondary: light-dark(#7a5a2f, #d9c3a0);
     --color-secondary-subtle: light-dark(#f1e8d8, #2c281f);

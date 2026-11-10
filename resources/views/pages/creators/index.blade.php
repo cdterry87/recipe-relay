@@ -84,6 +84,7 @@ new #[Layout('layouts::app'), Title('Creators')] class extends Component
             @endif
         </section>
     @else
+        <h2 class="visually-hidden">Creators</h2>
         <div class="creator-grid">
             @foreach ($this->creators as $creator)
                 <x-creator.tile :creator="$creator" wire:key="creator-{{ $creator->uuid }}" />
