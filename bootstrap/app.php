@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // such as password reset links, can't point at an attacker's domain. Off in local and tests.
         $middleware->trustHosts();
 
+        // Mail apps' one-click unsubscribe posts without a CSRF token; the signed URL protects it.
+        $middleware->validateCsrfTokens(except: ['unsubscribe/*']);
+
         $middleware->alias([
             'registration.enabled' => EnsureRegistrationEnabled::class,
         ]);

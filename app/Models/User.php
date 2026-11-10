@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EmailPreference;
 use App\Enums\Visibility;
 use App\Models\Concerns\HasPublicUuid;
 use App\Notifications\ResetPasswordNotification;
@@ -16,13 +17,30 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
  * `google_id`, `is_demo` and `is_sample` are never mass assignable: set them with forceFill().
+ *
+ * @property int $id
+ * @property string $uuid
+ * @property string $name
+ * @property string $email
+ * @property Carbon|null $email_verified_at
+ * @property string|null $password
+ * @property string|null $avatar_path
+ * @property string|null $bio
+ * @property string $timezone
+ * @property int $digest_day
+ * @property int $digest_hour
+ * @property Carbon|null $last_digest_at
+ * @property array<string, bool>|null $email_preferences
+ * @property bool $is_demo
+ * @property bool $is_sample
  */
-#[Fillable(['name', 'email', 'password', 'bio', 'timezone'])]
+#[Fillable(['name', 'email', 'password', 'bio', 'timezone', 'digest_day', 'digest_hour', 'email_preferences'])]
 #[Hidden(['password', 'remember_token', 'google_id'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -36,6 +54,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'timezone' => 'UTC',
         'is_demo' => false,
         'is_sample' => false,
+        'digest_day' => 0,
+        'digest_hour' => 9,
     ];
 
     /**
@@ -50,6 +70,10 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'is_demo' => 'boolean',
             'is_sample' => 'boolean',
+            'digest_day' => 'integer',
+            'digest_hour' => 'integer',
+            'last_digest_at' => 'datetime',
+            'email_preferences' => 'array',
         ];
     }
 
@@ -150,6 +174,47 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isFollowable(): bool
     {
         return $this->recipes()->listed()->exists();
+    }
+
+    /**
+     * Whether we may email this member at all: never the shared demo account, the sample
+     * creators, or an address nobody has confirmed.
+     */
+    public function canReceiveEmail(): bool
+    {
+        return ! $this->is_demo && ! $this->is_sample && $this->hasVerifiedEmail();
+    }
+
+    /**
+     * The member's choice for one kind of optional email, or its default.
+     */
+    public function prefers(EmailPreference $preference): bool
+    {
+        return (bool) ($this->email_preferences[$preference->value] ?? $preference->default());
+    }
+
+    public function wantsEmail(EmailPreference $preference): bool
+    {
+        return $this->canReceiveEmail() && $this->prefers($preference);
+    }
+
+    public function setEmailPreference(EmailPreference $preference, bool $on): void
+    {
+        $this->email_preferences = [...($this->email_preferences ?? []), $preference->value => $on];
+        $this->save();
+    }
+
+    /**
+     * Whether the weekly digest is due this hour, in the member's own timezone. A digest
+     * within the past six days means it has already gone out this week.
+     */
+    public function digestIsDue(\DateTimeInterface $now): bool
+    {
+        $local = Carbon::instance($now)->setTimezone($this->timezone);
+
+        return $local->dayOfWeek === $this->digest_day
+            && $local->hour === $this->digest_hour
+            && ($this->last_digest_at === null || $this->last_digest_at->lt(Carbon::instance($now)->subDays(6)));
     }
 
     /**

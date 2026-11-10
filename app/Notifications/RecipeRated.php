@@ -2,10 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Enums\EmailPreference;
 use App\Models\Recipe;
 use App\Models\User;
+use App\Support\Unsubscribe;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -25,7 +28,22 @@ class RecipeRated extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return $notifiable instanceof User && $notifiable->wantsEmail(EmailPreference::NewRating)
+            ? ['database', 'mail']
+            : ['database'];
+    }
+
+    /**
+     * @param  User  $notifiable
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->subject("{$this->rater->name} rated {$this->recipe->title}")
+            ->view(['mail.recipe-rated', 'mail.recipe-rated-text'], [...$this->toArray($notifiable), 'name' => $notifiable->name, 'unsubscribeUrl' => Unsubscribe::url($notifiable, EmailPreference::NewRating), 'settingsUrl' => route('settings.notifications')])
+            ->withSymfonyMessage(fn ($message) => $message->getHeaders()
+                ->addTextHeader('List-Unsubscribe', '<'.Unsubscribe::url($notifiable, EmailPreference::NewRating).'>')
+                ->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click'));
     }
 
     public function databaseType(object $notifiable): string

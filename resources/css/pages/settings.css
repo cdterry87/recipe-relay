@@ -60,3 +60,12 @@
     color: var(--color-text-muted);
     text-align: end;
 }
+
+.settings__row {
+    display: grid;
+    gap: var(--space-4);
+
+    @media (min-width: 30rem) {
+        grid-template-columns: 1fr 1fr;
+    }
+}

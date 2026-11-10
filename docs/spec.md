@@ -256,9 +256,12 @@ Fields:
 - **Weekly digest email** (the core notification):
   - Each member picks a day and hour (default **Sunday 09:00**) in their own timezone. An hourly scheduled command finds the members due now and queues a Markdown mailable for each.
   - Contents: for each followed creator who published a public recipe in the past 7 days, their name and avatar plus up to 3 of those recipes. Then a "Trending this week" section with a few top-rated new public recipes from the community.
-  - Skipped when there is nothing new. Never includes private or unlisted recipes.
+  - Skipped when nobody the member follows has published a public recipe in the window. "Trending this week" alone never triggers an email. Never includes private or unlisted recipes.
+  - The window starts at the later of the last digest and seven days ago, so recipes never repeat. It is fixed when the email is queued.
   - One-click unsubscribe with a signed URL and `List-Unsubscribe` headers.
   - **Digest preview:** `/my/digest` shows the next digest in the browser. This lets portfolio visitors see the feature without receiving email.
+  - **Unsubscribe links** (`/unsubscribe/{uuid}/{type}`, signed, no expiry) open a page with a button rather than unsubscribing on GET, so email link scanners can't unsubscribe anyone. Mail apps' one-click unsubscribe (RFC 8058) POSTs to the same signed address, which is exempt from CSRF.
+  - Email settings live at `/settings/notifications`: the three optional emails plus the digest day and hour.
 - **In-app notifications** (database channel, under a bell icon): "X started following you", "Y rated your recipe", "Z posted a new recipe".
 - **Email preferences:** weekly digest (on), new follower (off), new rating (off).
 - **How it's built (M4):**
@@ -280,6 +283,11 @@ Fields:
   - Facebook, X, Pinterest (with image), WhatsApp, Reddit
 - **Email a friend** (members only): enter an email address and an optional short note, and we send a branded email containing the recipe card. Queued, rate limited (5 per hour per member), and not available to the demo user.
 - Social preview images use the hero image.
+- **How it's built (M5):**
+  - The Share button always opens our sheet (a modal `<dialog>`, a bottom sheet on phones). The device's own share menu is offered inside it as "More options" where `navigator.share` exists, so "Email a friend" and the social links are never hidden behind it.
+  - Owners see Share on private recipes and drafts too, with an explanation and a link to change the visibility.
+  - `App\Support\ShareLinks` builds the share addresses. Pinterest appears only when the recipe has a photo.
+  - "Email a friend" (`App\Livewire\EmailRecipe`) needs a verified email, is limited to 5 an hour per member, never sets Reply-To (so the sender's address stays private), and is off for the demo account.
 
 ### B3.9 Creator profiles
 - `/creators` lists every member with a public recipe, most followed first, with a name search.

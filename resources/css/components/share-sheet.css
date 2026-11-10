@@ -1,0 +1,117 @@
+/* The share sheet: a modal <dialog>, a bottom sheet on phones and a centered card above. */
+.share-sheet {
+    width: min(100%, 32rem);
+    max-height: min(90dvh, 44rem);
+    margin: auto auto 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-lg);
+
+    &::backdrop {
+        background: var(--color-backdrop);
+    }
+
+    @media (min-width: 40rem) {
+        margin: auto;
+        border-radius: var(--radius-xl);
+    }
+}
+
+.share-sheet__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+}
+
+.share-sheet__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.share-sheet__title {
+    font-size: var(--text-lg);
+    overflow-wrap: anywhere;
+}
+
+.share-sheet__copy {
+    display: flex;
+    gap: var(--space-2);
+
+    .field__control {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.share-sheet__networks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 6.5rem), 1fr));
+    gap: var(--space-2);
+    list-style: none;
+}
+
+.share-sheet__network {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    min-height: var(--control-height);
+    padding-inline: var(--space-3);
+    border: var(--border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--color-surface-hover);
+    }
+
+    &:focus-visible {
+        outline: var(--focus-ring);
+    }
+}
+
+.share-sheet__badge {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-subtle);
+    color: var(--color-primary-text);
+    font-weight: var(--weight-bold);
+}
+
+.email-friend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-block-start: var(--space-4);
+    border-block-start: var(--border);
+}
+
+.email-friend__title {
+    font-size: var(--text-md);
+}
+
+.link-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-primary-text);
+    font: inherit;
+    font-weight: var(--weight-bold);
+    text-decoration: underline;
+    cursor: pointer;
+}

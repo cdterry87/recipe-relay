@@ -188,6 +188,42 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    // The recipe share sheet. "More options" hands off to the device's own share menu.
+    Alpine.data('shareSheet', ({ url, title, text }) => ({
+        copied: false,
+        canShare: typeof navigator.share === 'function',
+
+        open() {
+            this.$refs.dialog.showModal();
+        },
+
+        close() {
+            this.$refs.dialog.close();
+        },
+
+        async copy() {
+            try {
+                await navigator.clipboard.writeText(url);
+                this.copied = true;
+                window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'success', message: 'Link copied. Paste it anywhere.' } }));
+                setTimeout(() => (this.copied = false), 2000);
+            } catch {
+                const input = this.$root.querySelector('input[readonly]');
+                input?.focus();
+                input?.select();
+                window.dispatchEvent(new CustomEvent('toast', { detail: { type: 'info', message: 'Press Ctrl+C or ⌘C to copy the selected link.' } }));
+            }
+        },
+
+        async native() {
+            try {
+                await navigator.share({ title, text, url });
+            } catch {
+                // Cancelled or unavailable: the sheet stays open.
+            }
+        },
+    }));
+
     Alpine.data('toasts', (flashed = null) => ({
         items: [],
         nextId: 0,
