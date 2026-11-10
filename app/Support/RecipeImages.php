@@ -39,14 +39,19 @@ final class RecipeImages
 
     public static function delete(?string $base): void
     {
-        if ($base !== null) {
+        // Seed photos are shared and ship with the app.
+        if ($base !== null && ! SeedPhotos::isSeed($base)) {
             Storage::disk('public')->delete(array_map(fn (int $width) => "{$base}-{$width}.webp", self::WIDTHS));
         }
     }
 
     public static function url(?string $base, int $width = 800): ?string
     {
-        return $base === null ? null : Storage::disk('public')->url("{$base}-{$width}.webp");
+        return match (true) {
+            $base === null => null,
+            SeedPhotos::isSeed($base) => SeedPhotos::url($base, $width),
+            default => Storage::disk('public')->url("{$base}-{$width}.webp"),
+        };
     }
 
     public static function srcset(?string $base): ?string

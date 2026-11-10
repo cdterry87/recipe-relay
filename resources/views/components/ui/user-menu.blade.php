@@ -16,7 +16,9 @@
             <li><a class="user-menu__link" href="{{ route('creators.show', $user) }}" wire:navigate><x-ui.icon name="eye" size="sm" /> My public profile</a></li>
             <li><a class="user-menu__link" href="{{ route('recipes.create') }}" wire:navigate><x-ui.icon name="plus" size="sm" /> New recipe</a></li>
             <li><a class="user-menu__link" href="{{ route('settings.profile') }}" wire:navigate><x-ui.icon name="user" size="sm" /> Profile</a></li>
-            <li><a class="user-menu__link" href="{{ route('settings.account') }}" wire:navigate><x-ui.icon name="pencil" size="sm" /> Account</a></li>
+            @unless ($user->is_demo)
+                <li><a class="user-menu__link" href="{{ route('settings.account') }}" wire:navigate><x-ui.icon name="pencil" size="sm" /> Account</a></li>
+            @endunless
             <li>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureNotDemo;
 use App\Http\Middleware\EnsureRegistrationEnabled;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'registration.enabled' => EnsureRegistrationEnabled::class,
+            'not-demo' => EnsureNotDemo::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

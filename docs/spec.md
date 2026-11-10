@@ -486,6 +486,12 @@ The launch content comes from the 21 legacy recipes in `archive-2025:database/da
 - **Dates are relative to the seed time.** A few recipes are published "this week", so the following feed, Trending and the digest preview always have content.
 - `php artisan db:seed` builds the same data as `demo:reset` (sample creators and recipes always; the demo user when its credentials are set).
 - Seeders contain no real people and no fixed passwords.
+- **How it's built (M6):**
+  - The seed recipes live in `database/data/recipes.php`, generated from the legacy JSON with meal types, collections, dietary tags and new summaries.
+  - Their photos are committed as WebP files in `public/images/seed/{key}-{400|800|1600}.webp`, made from the legacy photos. Recipes and avatars point at them with a `seed/{key}` path, which `RecipeImages`, `Avatars` and `User::avatarUrl()` resolve to `asset()` URLs and never delete. Many rows can share one photo, and a reset copies nothing.
+  - The sample creators are Rosa Delgado, Sam Okafor, Mei Tanaka and Priya Shah, at `{key}@samples.invalid` (a reserved domain no email can reach). Each uses a food photo as an avatar.
+  - The baseline is fixed, so every reset looks the same. Each sample creator follows the others and saves and rates every other creator's public recipes, with fixed star values. The demo user follows Rosa and Mei and has saved four recipes, three of them rated.
+  - `App\Support\DemoWorld::reset()` does all of this. `demo:reset` and `DatabaseSeeder` both call it.
 
 ## B10. Testing strategy
 - **Pest** for everything: feature tests for Livewire components with `Livewire::test`, unit tests for actions and `RecipeFilters`.
@@ -547,6 +553,12 @@ These apply to any user with `is_demo = true`. Controls are hidden in the UI **a
 - Cannot use "Email a friend", and is never sent email (digest, notifications). The digest preview page still works.
 - Can create up to 25 recipes, and **every one of them is private**. The visibility choice in the editor is replaced by a notice: "Demo recipes stay private, so nothing you write here is shown to other visitors." `SaveRecipe` forces `private` for demo users whatever is sent. The demo user's seed recipes are private too.
 - Can freely create, edit and delete recipes, save, rate, follow, and edit name, bio, timezone and preferences. The nightly reset restores everything.
+
+### B11.3a How the restrictions are enforced (M6)
+- **Middleware**: `EnsureNotDemo` (alias `not-demo`) guards `/settings/account`, which holds the email, password and delete-account forms. It is also a Livewire persistent middleware, so the page's actions are covered too. The Account tab and links are hidden from the demo user.
+- **Uploads**: `config/livewire.php` adds `not-demo` to Livewire's temporary upload route. The demo account can't send a file at all.
+- **Photos**: the editor and profile page show a photo picker of the seed photos instead of file inputs.
+- **Visibility**: `SaveRecipe` forces `private` and drops any upload for demo users, whatever the form sends.
 
 ### B11.4 `demo:reset`
 Restores the demo world in one transaction:

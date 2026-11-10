@@ -1,10 +1,14 @@
 <?php
 
+use App\Models\User;
+use App\Rules\Turnstile;
+use App\Support\DemoWorld;
 use App\Support\Registration;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -16,6 +20,56 @@ new #[Layout('layouts::app', ['width' => 'narrow']), Title('Log in')] class exte
     public string $password = '';
 
     public bool $remember = false;
+
+    /** Turnstile token for the demo button, so only people (not bots) get the one-click login. */
+    public string $turnstile = '';
+
+    #[Computed]
+    public function demo(): bool
+    {
+        return config('relay.demo_mode') && DemoWorld::demoConfigured();
+    }
+
+    /**
+     * Signs in as the shared demo account after a Turnstile check. The credentials never
+     * reach the browser.
+     */
+    public function loginAsDemo(): void
+    {
+        abort_unless($this->demo, 404);
+
+        $key = 'demo-login|'.request()->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 10)) {
+            throw ValidationException::withMessages([
+                'turnstile' => __('auth.throttle', ['seconds' => RateLimiter::availableIn($key)]),
+            ]);
+        }
+
+        RateLimiter::hit($key, 600);
+
+        try {
+            $this->validate(
+                ['turnstile' => ['required', new Turnstile(request()->ip())]],
+                ['turnstile.required' => 'Please complete the security check and try again.'],
+            );
+        } finally {
+            // Turnstile tokens are single-use, so every attempt needs a fresh one.
+            $this->reset('turnstile');
+            $this->dispatch('turnstile-reset');
+        }
+
+        $demo = User::query()->where('is_demo', true)->where('email', config('relay.demo.email'))->first();
+
+        if ($demo === null) {
+            throw ValidationException::withMessages(['turnstile' => 'The demo is being set up. Please try again in a minute.']);
+        }
+
+        Auth::login($demo);
+        session()->regenerate();
+
+        $this->redirectRoute('home');
+    }
 
     public function login(): void
     {
@@ -69,6 +123,18 @@ new #[Layout('layouts::app', ['width' => 'narrow']), Title('Log in')] class exte
         <h1>Welcome <em>back</em></h1>
         <p class="auth__lead">Log in to get cooking.</p>
     </header>
+
+    @if ($this->demo)
+        <section class="demo-panel" aria-labelledby="demo-title">
+            <h2 class="demo-panel__title" id="demo-title">Try the <em>demo</em></h2>
+            <p class="demo-panel__note">Look around with sample recipes, cooks and ratings. The demo data resets every night.</p>
+            {{-- Stays hidden unless Cloudflare wants a click to prove the visitor is a person. --}}
+            <div class="demo-panel__check" wire:ignore x-data="turnstile(@js(config('relay.turnstile.site_key')), { appearance: 'interaction-only', action: 'demo-login' })"></div>
+            @error('turnstile')<p class="field__error" role="alert">{{ $message }}</p>@enderror
+            <x-ui.button variant="secondary" block icon="sparkles" wire:click="loginAsDemo" wire:loading.attr="disabled" wire:target="loginAsDemo">Log in as the demo user</x-ui.button>
+        </section>
+        <p class="auth__divider">or use your account</p>
+    @endif
 
     <x-auth.google-button />
 

@@ -7,6 +7,7 @@ use App\Enums\Visibility;
 use App\Models\Concerns\HasPublicUuid;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
+use App\Support\SeedPhotos;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -235,7 +236,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function avatarUrl(): ?string
     {
-        return $this->avatar_path ? Storage::disk('public')->url($this->avatar_path) : null;
+        return match (true) {
+            $this->avatar_path === null => null,
+            SeedPhotos::isSeed($this->avatar_path) => SeedPhotos::url($this->avatar_path, 400),
+            default => Storage::disk('public')->url($this->avatar_path),
+        };
     }
 
     /**
