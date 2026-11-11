@@ -7,6 +7,8 @@ use App\Support\Registration;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Laravel\Socialite\AbstractUser;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirect;
@@ -69,8 +71,16 @@ class GoogleController
             $user->google_id ??= $google->getId();
 
             // Google has confirmed this same address, so the account's email is confirmed too.
+            // Nobody had proved they owned the address before, so someone else may have signed
+            // up with it first ("pre-account hijacking"). Drop that password and sign out every
+            // other session, so only the address's real owner keeps the account.
             if (! $user->hasVerifiedEmail() && strcasecmp($user->email, $email) === 0) {
-                $user->email_verified_at = now();
+                $user->forceFill([
+                    'email_verified_at' => now(),
+                    'password' => null,
+                    'remember_token' => Str::random(60),
+                ]);
+                DB::table('sessions')->where('user_id', $user->id)->delete();
             }
 
             $user->save();

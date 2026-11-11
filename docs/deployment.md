@@ -10,6 +10,9 @@ Create a server in Forge (any provider) with:
 - **MySQL 8.x**. Create a database and a user for the site. MariaDB is not tested.
 - **Node 20 or newer**, for the Vite build during deploys. Forge installs Node on new servers.
 - The GD PHP extension (installed by default). Intervention Image uses it to make WebP photos.
+- **PHP limits** (Server → PHP → Max File Upload Size and the FPM php.ini):
+  - `upload_max_filesize` and `post_max_size` of at least 10M, since photos may be up to 8 MB.
+  - `memory_limit` of at least 512M. Photos are capped at 50 megapixels, and decoding one takes about 4 bytes per pixel.
 
 ## 2. Site
 
@@ -149,6 +152,16 @@ Check it with `php artisan schedule:list`.
 - Send yourself a password reset or an "email a friend" message to confirm the mail provider and the queue worker.
 - In the browser's developer tools, check that the response headers include `Content-Security-Policy`, `X-Frame-Options: DENY` and `Strict-Transport-Security`.
 - Optional: Forge's **Monitoring** for disk and CPU, and **Database Backups** to object storage. The demo data rebuilds itself, so backups matter only for real accounts.
+
+## Hardening the web server
+
+Uploads are stored only as re-encoded `.webp` files with random names. Never-trusted temporary uploads stay in `storage/app/livewire-tmp`, outside the web root. As a second line of defence, stop nginx from ever running PHP under `/storage`. Add this to the site's nginx config, above the main `location ~ \.php$` block:
+
+```nginx
+location ~* ^/storage/.*\.php$ {
+    deny all;
+}
+```
 
 ## Caching and static files
 

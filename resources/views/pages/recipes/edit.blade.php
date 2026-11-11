@@ -10,11 +10,13 @@ use App\Enums\Method;
 use App\Enums\Occasion;
 use App\Enums\Visibility;
 use App\Livewire\Forms\RecipeForm;
+use App\Rules\MaxMegapixels;
 use App\Models\Recipe;
 use App\Support\RecipeImages;
 use App\Support\SeedPhotos;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Intervention\Image\Exceptions\ImageException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -126,7 +128,7 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
 
         try {
             $this->form->validate();
-            $this->validate(['photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192', 'dimensions:min_width=400,min_height=300,max_width=10000,max_height=10000']], [
+            $this->validate(['photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192', 'dimensions:min_width=400,min_height=300,max_width=10000,max_height=10000', new MaxMegapixels(50)]], [
                 'photo.dimensions' => 'Choose a photo at least 400 pixels wide and 300 tall.',
             ], ['photo' => 'photo']);
         } finally {
@@ -161,17 +163,21 @@ new #[Layout('layouts::app', ['width' => 'reading'])] class extends Component
 
         $isNew = $this->recipe === null;
 
-        $saved = $saveRecipe->handle(
-            auth()->user(),
-            $this->recipe,
-            $this->form->details(),
-            $ingredients,
-            $steps,
-            $visibility,
-            $this->photo,
-            $this->removePhoto,
-            $demo && $this->seedPhoto !== '' ? $this->seedPhoto : null,
-        );
+        try {
+            $saved = $saveRecipe->handle(
+                auth()->user(),
+                $this->recipe,
+                $this->form->details(),
+                $ingredients,
+                $steps,
+                $visibility,
+                $this->photo,
+                $this->removePhoto,
+                $demo && $this->seedPhoto !== '' ? $this->seedPhoto : null,
+            );
+        } catch (ImageException) {
+            throw ValidationException::withMessages(['photo' => "That photo couldn't be read. Please try a different one."]);
+        }
 
         $this->recipeUuid = $saved->uuid;
         unset($this->recipe);
