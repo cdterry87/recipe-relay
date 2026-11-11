@@ -1,5 +1,6 @@
 <?php
 
+use App\Rules\MaxMegapixels;
 use App\Support\Avatars;
 use App\Support\SeedPhotos;
 use Illuminate\Support\Facades\RateLimiter;
@@ -86,7 +87,7 @@ new #[Layout('layouts::app', ['width' => 'reading']), Title('Profile settings')]
         RateLimiter::hit($key, 600);
 
         $this->validate([
-            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120', 'dimensions:min_width=64,min_height=64,max_width=8000,max_height=8000'],
+            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120', 'dimensions:min_width=64,min_height=64,max_width=8000,max_height=8000', new MaxMegapixels(50)],
         ], [
             'photo.dimensions' => 'Choose a photo at least 64 pixels wide and tall.',
         ], ['photo' => 'photo']);

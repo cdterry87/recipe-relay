@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as GoogleUser;
@@ -132,4 +133,30 @@ it('recovers when Google sign-in fails', function () {
     $this->get('/auth/google/callback')
         ->assertRedirect(route('login'))
         ->assertSessionHas('toast.message', "Google sign-in didn't work. Please try again.");
+});
+
+it('takes an unconfirmed account back from whoever set its password', function () {
+    // Someone signed up with Julia's address before she did, and set their own password.
+    $user = User::factory()->unverified()->create(['email' => 'julia@example.com', 'password' => 'squatter-password']);
+    $token = $user->remember_token;
+    DB::table('sessions')->insert(['id' => 'squatter', 'user_id' => $user->id, 'payload' => '', 'last_activity' => time()]);
+    googleReturns();
+
+    $this->get('/auth/google/callback')->assertRedirect(route('home'));
+
+    $user->refresh();
+
+    expect($user->hasPassword())->toBeFalse()
+        ->and($user->remember_token)->not->toBe($token)
+        ->and(DB::table('sessions')->where('id', 'squatter')->exists())->toBeFalse();
+    $this->assertAuthenticatedAs($user);
+});
+
+it('keeps the password of a confirmed account it links to', function () {
+    $user = User::factory()->create(['email' => 'julia@example.com', 'password' => 'my-own-password']);
+    googleReturns();
+
+    $this->get('/auth/google/callback')->assertRedirect(route('home'));
+
+    expect($user->fresh()->hasPassword())->toBeTrue();
 });

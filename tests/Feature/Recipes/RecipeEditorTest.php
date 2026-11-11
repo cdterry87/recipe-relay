@@ -208,9 +208,14 @@ it('removes the photo', function () {
 it('rejects unsuitable photos', function (Closure $file) {
     Storage::fake('public');
 
-    fillRecipe(editor(User::factory()->create()))->set('photo', $file())->call('save')->assertHasErrors('photo');
+    // Wrong types and oversized files are refused at upload; the rest when saving.
+    $component = fillRecipe(editor(User::factory()->create()))->set('photo', $file());
+    $refusedAtUpload = $component->errors()->has('photo');
+    $component->call('save');
 
-    expect(Recipe::count())->toBe(0);
+    expect($refusedAtUpload || $component->errors()->has('photo'))->toBeTrue()
+        ->and(Recipe::query()->whereNotNull('image_path')->count())->toBe(0);
+    Storage::disk('public')->assertDirectoryEmpty('/');
 })->with([
     'not an image' => fn () => UploadedFile::fake()->create('notes.pdf', 10, 'application/pdf'),
     'too small' => fn () => UploadedFile::fake()->image('tiny.png', 200, 150),
